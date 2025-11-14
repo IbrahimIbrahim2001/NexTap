@@ -2,7 +2,6 @@ import { Button } from '@/components/ui/button'
 import { Check } from 'lucide-react'
 import Image from 'next/image'
 import Link from 'next/link'
-
 export default function Pricing() {
     return (
         <div className="relative py-16 md:py-32" id='pricing'>
@@ -19,7 +18,6 @@ export default function Pricing() {
                                 <span className="mb-6 mt-12 inline-block text-6xl font-bold">
                                     <span className="text-4xl">$</span>0
                                 </span>
-
                                 <div className="flex justify-center">
                                     <Button
                                         asChild
