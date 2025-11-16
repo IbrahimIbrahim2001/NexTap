@@ -12,13 +12,13 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2(react-hook-form@7.66.0(react@19.2.0))
       '@orpc/client':
-        specifier: ^1.10.4
+        specifier: ^1.11.2
         version: 1.11.2
       '@orpc/server':
-        specifier: ^1.10.4
+        specifier: ^1.11.2
         version: 1.11.2
       '@orpc/tanstack-query':
-        specifier: ^1.10.4
+        specifier: ^1.11.2
         version: 1.11.2(@orpc/client@1.11.2)(@tanstack/query-core@5.90.8)
       '@radix-ui/react-avatar':
         specifier: ^1.1.11
