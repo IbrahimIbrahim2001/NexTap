@@ -61,8 +61,7 @@ export function WorkspaceProjects() {
                             <SidebarMenuButton asChild tooltip={item.name} className="font-semibold active:text-primary hover:text-accent transition-al duration-200">
                                 <Link href={"#"} className="w-full">
                                     <item.icon />
-                                    {/* <p className="group-data-[collapsible=icon]:text-lg">{item.name.charAt(0).toLocaleUpperCase()}</p> */}
-                                    <span>{item.name}</span>
+                                    <span>{item?.name}</span>
                                 </Link>
                             </SidebarMenuButton>
                             <DropdownMenu>

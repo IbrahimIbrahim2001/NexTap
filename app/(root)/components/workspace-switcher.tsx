@@ -18,10 +18,11 @@ import {
 import { authClient } from "@/lib/auth-client"
 import Link from "next/link"
 import { CreateWorkSpace } from "./create-workspace"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { organizationSchema } from "better-auth/plugins"
 import z from "zod"
 import { useState } from "react"
+import WorkspaceAvatar from "./workspace-avatar"
+import { Button } from "@/components/ui/button"
 
 export function WorkspaceSwitcher() {
     const { isMobile } = useSidebar();
@@ -50,10 +51,7 @@ export function WorkspaceSwitcher() {
                             className="data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
                         >
                             <div className="bg-sidebar-primary text-sidebar-primary-foreground flex aspect-square size-8 items-center justify-center rounded-lg">
-                                <Avatar className="h-8 w-8 rounded-lg">
-                                    <AvatarImage src={activeWorkspace.logo ?? undefined} alt={activeWorkspace.name} />
-                                    <AvatarFallback className="rounded-lg">{activeWorkspace.name.charAt(0).toLocaleUpperCase()}</AvatarFallback>
-                                </Avatar>
+                                <WorkspaceAvatar workspace={activeWorkspace} height="h-8" width="w-8" />
                             </div>
                             <div className="grid flex-1 text-left text-sm leading-tight">
                                 <span className="truncate font-medium">{activeWorkspace.name}</span>
@@ -68,22 +66,21 @@ export function WorkspaceSwitcher() {
                         side={isMobile ? "bottom" : "right"}
                         sideOffset={4}
                     >
-                        <DropdownMenuLabel className="text-muted-foreground text-xs">
-                            <Link href="../workspace" className="hover:underline hover:text-foreground">
-                                Workspaces
-                            </Link>
+                        <DropdownMenuLabel asChild className="text-muted-foreground text-xs">
+                            <Button variant="link" onClick={() => setOpen(false)} className="h-8">
+                                <Link href="../workspace">
+                                    Workspaces
+                                </Link>
+                            </Button>
                         </DropdownMenuLabel>
                         {workspaces?.map((workspace, index) => (
                             <Link href={`/workspace/${workspace.id}`} key={workspace.id}>
                                 <DropdownMenuItem
                                     onClick={() => setActiveWorkspace(workspace)}
-                                    className="gap-2 p-2"
+                                    className="gap-3 p-2"
                                 >
                                     <div className="flex size-6 items-center justify-center rounded-md border">
-                                        <Avatar className="h-8 w-8 rounded-lg">
-                                            <AvatarImage src={workspace.logo ?? undefined} alt={workspace.name} />
-                                            <AvatarFallback className="rounded-lg">{workspace.name.charAt(0).toLocaleUpperCase()}</AvatarFallback>
-                                        </Avatar>
+                                        <WorkspaceAvatar workspace={workspace} height="h-8" width="w-8" />
                                     </div>
                                     {workspace.name}
                                     <DropdownMenuShortcut>⌘{index + 1}</DropdownMenuShortcut>
