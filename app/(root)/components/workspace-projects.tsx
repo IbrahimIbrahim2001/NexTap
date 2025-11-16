@@ -27,6 +27,7 @@ import {
     SidebarMenuItem,
     useSidebar,
 } from "@/components/ui/sidebar"
+import Link from "next/link";
 // import { Badge } from "@/components/ui/badge";
 
 const projects = [
@@ -57,11 +58,12 @@ export function WorkspaceProjects() {
                 <SidebarMenu>
                     {projects.map((item) => (
                         <SidebarMenuItem key={item.name}>
-                            <SidebarMenuButton asChild tooltip={item.name} className="font-semibold text-primary hover:text-accent transition-al duration-200">
-                                <a href={item.url}>
+                            <SidebarMenuButton asChild tooltip={item.name} className="font-semibold active:text-primary hover:text-accent transition-al duration-200">
+                                <Link href={"#"} className="w-full">
                                     <item.icon />
+                                    {/* <p className="group-data-[collapsible=icon]:text-lg">{item.name.charAt(0).toLocaleUpperCase()}</p> */}
                                     <span>{item.name}</span>
-                                </a>
+                                </Link>
                             </SidebarMenuButton>
                             <DropdownMenu>
                                 <DropdownMenuTrigger asChild>
@@ -94,7 +96,7 @@ export function WorkspaceProjects() {
                     ))}
                     <SidebarMenuItem>
                         <SidebarMenuButton tooltip={"create a new project"} className="text-sidebar-foreground/70 border-2 border-border border-dashed">
-                            <Plus />
+                            <Plus className="text-lg" />
                             <span>Add project</span>
                         </SidebarMenuButton>
                     </SidebarMenuItem>
