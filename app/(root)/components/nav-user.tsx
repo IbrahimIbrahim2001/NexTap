@@ -27,10 +27,21 @@ import {
     useSidebar,
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
+import { useRouter } from "next/navigation"
 
 export function NavUser() {
     const user = authClient.useSession().data?.user;
     const { isMobile } = useSidebar();
+    const router = useRouter();
+    const handleSignout = async () => {
+        await authClient.signOut({
+            fetchOptions: {
+                onSuccess: () => {
+                    router.push("../login");
+                },
+            },
+        });
+    }
     const avatarFallback = user?.name
         .trim()
         .split(/\s+/)
@@ -85,7 +96,7 @@ export function NavUser() {
                             </DropdownMenuItem>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem>
+                        <DropdownMenuItem onClick={handleSignout}>
                             <LogOut />
                             Log out
                         </DropdownMenuItem>

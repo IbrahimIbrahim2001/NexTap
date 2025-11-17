@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, jsonb } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -101,3 +101,22 @@ export const invitation = pgTable("invitation", {
     .notNull()
     .references(() => user.id, { onDelete: "cascade" }),
 });
+
+
+export const project = pgTable("project", {
+  id: text("id").primaryKey(),
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+
+  name: text('name').notNull().unique(),
+  content: jsonb('content'),
+  icon: text('icon'),
+
+  createdAt: timestamp("created_at").notNull(),
+  updatedAt: timestamp('updated_at').defaultNow(),
+})
+
+export type ProjectSchema = typeof project.$inferSelect
+
+export const schema = { user, session, account, verification, organization, member, invitation, project };

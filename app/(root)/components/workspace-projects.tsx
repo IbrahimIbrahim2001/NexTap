@@ -3,21 +3,18 @@
 import {
     Folder,
     Forward,
-    Frame,
-    MapIcon,
     MoreHorizontal,
-    PieChart,
-    Plus,
-    Trash2,
-} from "lucide-react"
+    Trash2
+} from "lucide-react";
 
+import { Badge } from "@/components/ui/badge";
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuSeparator,
     DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
+} from "@/components/ui/dropdown-menu";
 import {
     SidebarGroup,
     SidebarGroupLabel,
@@ -26,42 +23,39 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
     useSidebar,
-} from "@/components/ui/sidebar"
+} from "@/components/ui/sidebar";
+import { orpc } from "@/lib/orpc";
+import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-// import { Badge } from "@/components/ui/badge";
-
-const projects = [
-    {
-        name: "Design Engineering",
-        url: "#",
-        icon: Frame,
-    },
-    {
-        name: "Sales & Marketing",
-        url: "#",
-        icon: PieChart,
-    },
-    {
-        name: "Travel",
-        url: "#",
-        icon: MapIcon,
-    },
-];
-
+import { CreateProject } from "../workspace/[workspace_id]/project/component/create-project";
+import { useParams } from "next/navigation";
 export function WorkspaceProjects() {
-    const { isMobile } = useSidebar()
-
+    const { isMobile } = useSidebar();
+    const params = useParams<{ workspace_id: string }>();
+    const { data: projects } = useQuery(
+        orpc.project.list.queryOptions({
+            input: { workspace_id: params.workspace_id }
+        }),
+    );
+    if (!projects || projects.length === 0) return (
+        <SidebarGroup>
+            <div className="text-center group-data-[collapsible=icon]:hidden mb-4">
+                <Badge variant="secondary">no projects yet</Badge>
+            </div>
+            <CreateProject />
+        </SidebarGroup>
+    )
     return (
         <>
             <SidebarGroup>
                 <SidebarGroupLabel>Projects</SidebarGroupLabel>
                 <SidebarMenu>
-                    {projects.map((item) => (
-                        <SidebarMenuItem key={item.name}>
-                            <SidebarMenuButton asChild tooltip={item.name} className="font-semibold active:text-primary hover:text-accent transition-al duration-200">
-                                <Link href={"#"} className="w-full">
-                                    <item.icon />
-                                    <span>{item?.name}</span>
+                    {projects.map((project) => (
+                        <SidebarMenuItem key={project.name}>
+                            <SidebarMenuButton asChild tooltip={project.name} className="font-semibold active:text-primary hover:text-accent transition-al duration-200">
+                                <Link href={`/workspace/${project.organizationId}/project/${project.id}`} className="w-full">
+                                    <span>{project.icon}</span>
+                                    <span>{project.name}</span>
                                 </Link>
                             </SidebarMenuButton>
                             <DropdownMenu>
@@ -93,17 +87,9 @@ export function WorkspaceProjects() {
                             </DropdownMenu>
                         </SidebarMenuItem>
                     ))}
-                    <SidebarMenuItem>
-                        <SidebarMenuButton tooltip={"create a new project"} className="text-sidebar-foreground/70 border-2 border-border border-dashed">
-                            <Plus className="text-lg" />
-                            <span>Add project</span>
-                        </SidebarMenuButton>
-                    </SidebarMenuItem>
+                    <CreateProject />
                 </SidebarMenu>
             </SidebarGroup>
-            {/* <div className="text-center">
-                <Badge variant="secondary">no projects yet</Badge>
-            </div> */}
         </>
     )
 }
