@@ -2,7 +2,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Organization } from "better-auth/plugins";
 
 interface WorkspaceAvatarProps {
-    workspace: Organization,
+    workspace: Organization | undefined,
     height?: string,
     width?: string
 }
@@ -23,6 +23,8 @@ function getWorkspaceColor(workspaceIdentifier: string): string {
 
 
 export default function WorkspaceAvatar({ workspace, height, width }: WorkspaceAvatarProps) {
+    if (!workspace) return null;
+
     const fallbackColor = getWorkspaceColor(workspace.slug || workspace.name);
     return (
         <Avatar className={`${height} ${width}  rounded-lg`}>

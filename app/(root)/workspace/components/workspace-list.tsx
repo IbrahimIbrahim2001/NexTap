@@ -13,9 +13,10 @@ import { CreateWorkSpace } from "../../components/create-workspace";
 import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 import Workspace from "./workspace";
+import { Loader } from "../../components/loader";
 export function WorkspaceList() {
     const { data: workspaces, isLoading } = useQuery(orpc.workspace.list.queryOptions());
-    if (isLoading) return <>loading....</>
+    if (isLoading) return <Loader />
     if (!workspaces || workspaces.length === 0) {
         return (
             <div className='p-4'>
