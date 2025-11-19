@@ -12,16 +12,14 @@ import {
 } from "@/components/ui/dialog";
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
-import { SidebarMenuButton, SidebarMenuItem } from "@/components/ui/sidebar";
 import { Spinner } from "@/components/ui/spinner";
 import { authClient } from "@/lib/auth-client";
 import { orpc } from "@/lib/orpc";
 import { createProjectSchema, createProjectSchemaType } from "@/schemas/create-project-schema";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 
@@ -30,7 +28,7 @@ const ICON_OPTIONS = [
     "🎯", "💡", "🛠️", "📈", "🔍", "📱", "🌐", "💻"
 ];
 
-export function CreateProject() {
+export function CreateProject({ trigger }: { trigger: ReactNode }) {
     const [open, setOpen] = useState(false);
     const [selectedIcon, setSelectedIcon] = useState("🚀");
     const router = useRouter();
@@ -39,7 +37,6 @@ export function CreateProject() {
     const params = useParams<{ workspace_id: string }>();
     const mutateCreateProject = useMutation(orpc.project.create.mutationOptions({
         onSuccess: (data) => {
-
             if (data.success) {
                 toast.success(data.message);
                 setOpen(false);
@@ -73,12 +70,7 @@ export function CreateProject() {
     return (
         <Dialog open={open} onOpenChange={setOpen}>
             <DialogTrigger asChild className="group h-10">
-                <SidebarMenuItem>
-                    <SidebarMenuButton tooltip={"create a new project"} className="text-sidebar-foreground/70 border-2 border-border border-dashed">
-                        <Plus className="text-lg" />
-                        <span>Add project</span>
-                    </SidebarMenuButton>
-                </SidebarMenuItem>
+                {trigger}
             </DialogTrigger>
             <DialogContent className="sm:max-w-[425px]">
                 <form id="form" onSubmit={form.handleSubmit(onSubmit)}>

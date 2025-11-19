@@ -1,5 +1,5 @@
 
-import { createProject, projectList } from "./project";
+import { createProject, getProject, projectList } from "./project";
 import { workspaceList } from "./workspace";
 export const router = {
     workspace: {
@@ -7,6 +7,7 @@ export const router = {
     },
     project: {
         create: createProject,
-        list: projectList
+        list: projectList,
+        get: getProject,
     }
 }
