@@ -41,7 +41,7 @@ export function CreateWorkSpace({ trigger }: { trigger: ReactNode }) {
             toast.success(`create workspace "${values.name}" successfully`)
             setOpen(false);
             form.reset();
-            redirect(`/workspace/${data.id}`);
+            redirect(`/workspace/${data.id}/project`);
         } else if (error) {
             toast.error(error.message)
         }

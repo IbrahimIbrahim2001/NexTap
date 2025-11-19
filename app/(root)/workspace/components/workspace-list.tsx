@@ -1,6 +1,7 @@
 "use client";
-import { Logo } from "@/components/logo"
-import { Button } from "@/components/ui/button"
+import { Logo } from "@/components/logo";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
 import {
     Empty,
     EmptyContent,
@@ -8,17 +9,15 @@ import {
     EmptyHeader,
     EmptyMedia,
     EmptyTitle,
-} from "@/components/ui/empty"
-import { CreateWorkSpace } from "../../components/create-workspace";
-import { useQuery } from "@tanstack/react-query";
-import { orpc } from "@/lib/orpc";
-import Workspace from "./workspace";
-import { Loader } from "../../components/loader";
-import { Card, CardContent } from "@/components/ui/card";
+} from "@/components/ui/empty";
+import { authClient } from "@/lib/auth-client";
 import { Plus } from "lucide-react";
+import { CreateWorkSpace } from "../../components/create-workspace";
+import { Loader } from "../../components/loader";
+import Workspace from "./workspace";
 export function WorkspaceList() {
-    const { data: workspaces, isLoading } = useQuery(orpc.workspace.list.queryOptions());
-    if (isLoading) return <Loader />
+    const { data: workspaces, isPending } = authClient.useListOrganizations();
+    if (isPending) return <Loader />
     if (!workspaces || workspaces.length === 0) {
         return (
             <div className='p-4'>
