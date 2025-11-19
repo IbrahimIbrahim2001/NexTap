@@ -71,7 +71,7 @@ export function WorkspaceSwitcher() {
                             </Button>
                         </DropdownMenuLabel>
                         {workspaces?.map((workspace, index) => (
-                            <Link href={`/workspace/${workspace.id}`} key={workspace.id}>
+                            <Link href={`/workspace/${workspace.id}/project`} key={workspace.id}>
                                 <DropdownMenuItem
                                     onClick={() => setActiveWorkspace(workspace)}
                                     className="gap-3 p-2"

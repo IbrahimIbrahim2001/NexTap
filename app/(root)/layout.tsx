@@ -3,7 +3,7 @@ import { AppSidebar } from './components/app-sidebar'
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar'
 import { Navbar } from './components/nav-bar'
 
-export default function AuthLayout({ children }: { children: ReactNode }) {
+export default function RootLayout({ children }: { children: ReactNode }) {
     return (
         <>
             <SidebarProvider defaultOpen={false}>

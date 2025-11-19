@@ -1,4 +1,3 @@
-
 import { getQueryClient, HydrateClient } from "@/lib/query/hydration"
 import { orpc } from "@/lib/orpc"
 import { WorkspaceList } from "./components/workspace-list";

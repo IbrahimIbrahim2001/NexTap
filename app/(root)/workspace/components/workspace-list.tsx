@@ -14,6 +14,8 @@ import { useQuery } from "@tanstack/react-query";
 import { orpc } from "@/lib/orpc";
 import Workspace from "./workspace";
 import { Loader } from "../../components/loader";
+import { Card, CardContent } from "@/components/ui/card";
+import { Plus } from "lucide-react";
 export function WorkspaceList() {
     const { data: workspaces, isLoading } = useQuery(orpc.workspace.list.queryOptions());
     if (isLoading) return <Loader />
@@ -46,6 +48,14 @@ export function WorkspaceList() {
                     {workspaces?.map((workspace) => (
                         <Workspace key={workspace.id} workspace={workspace} />
                     ))}
+                    <CreateWorkSpace trigger={
+                        <Card className="border-2 border-dashed w-full max-w-sm h-26 p-0 shadow-none hover:scale-105">
+                            <CardContent className="p-6 h-full flex items-center justify-center">
+                                <Plus className='size-10 text-foreground/80' />
+                            </CardContent>
+                        </Card>
+                    }
+                    />
                 </div>
             </div>
         </div>

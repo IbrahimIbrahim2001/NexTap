@@ -11,5 +11,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-    matcher: ["/workspace"], // Specify the routes the middleware applies to
+    matcher: ["/workspace", "/workspace:workspace_id", "/project"],
 };

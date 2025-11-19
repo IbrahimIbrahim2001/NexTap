@@ -88,3 +88,31 @@ export const projectList = base
         })
         return projects;
     })
+
+
+export const getProject = base
+    .use(requiredAuthMiddleware)
+    .input(z.object({ workspace_id: z.string(), project_id: z.string() }))
+    .output(z.custom<ProjectSchema>().nullish())
+    .handler(async ({ context, input }) => {
+        const { workspace_id, project_id } = input;
+        const userId = context.user.id;
+
+        const memberUser = await db.query.member.findFirst({
+            where: and(
+                eq(member.userId, userId),
+                eq(member.organizationId, workspace_id)
+            ),
+        });
+
+        if (!memberUser) {
+            throw new Error("User is not a member of this workspace");
+        }
+        const findProject = await db.query.project.findFirst({
+            where: and(
+                eq(project.organizationId, workspace_id),
+                eq(project.id, project_id)
+            )
+        })
+        return findProject;
+    })
