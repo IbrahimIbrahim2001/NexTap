@@ -92,6 +92,10 @@ export const projectList = base
 
 export const getProject = base
     .use(requiredAuthMiddleware)
+    .route({
+        method: "GET",
+        path: "/get-project/:project_id"
+    })
     .input(z.object({ workspace_id: z.string(), project_id: z.string() }))
     .output(z.custom<ProjectSchema>().nullish())
     .handler(async ({ context, input }) => {

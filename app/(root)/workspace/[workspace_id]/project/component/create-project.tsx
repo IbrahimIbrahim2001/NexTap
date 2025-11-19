@@ -13,6 +13,7 @@ import {
 import { Field, FieldError, FieldGroup, FieldLabel } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { Spinner } from "@/components/ui/spinner";
+import { ProjectSchema } from "@/db/schema";
 import { authClient } from "@/lib/auth-client";
 import { orpc } from "@/lib/orpc";
 import { createProjectSchema, createProjectSchemaType } from "@/schemas/create-project-schema";
@@ -36,8 +37,37 @@ export function CreateProject({ trigger }: { trigger: ReactNode }) {
     const { data: activeWorkspace } = authClient.useActiveOrganization()
     const params = useParams<{ workspace_id: string }>();
     const mutateCreateProject = useMutation(orpc.project.create.mutationOptions({
-        onSuccess: (data) => {
+        onMutate: async (data) => {
+            await queryClient.cancelQueries();
+            const projectListKey = orpc.project.list.queryKey({ input: { workspace_id: activeWorkspace?.id ?? params.workspace_id } });
+            const previousData = queryClient.getQueryData([projectListKey]) as ProjectSchema[];
+            const tempId = crypto.randomUUID();
+            const newProject = {
+                id: tempId,
+                name: data.name,
+                icon: data.icon ?? selectedIcon,
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                organizationId: activeWorkspace?.id || params.workspace_id,
+                content: ""
+            } satisfies ProjectSchema
+            queryClient.setQueryData<ProjectSchema[]>(projectListKey, (old) => {
+                if (!old) return [newProject];
+                return [...old, newProject]
+            })
+            return { previousData, tempId, projectListKey }
+        },
+        onSuccess: (data, _variables, context) => {
+            const { projectListKey, tempId } = context;
             if (data.success) {
+                queryClient.setQueryData<ProjectSchema[]>(projectListKey, (old) => {
+                    if (!old) return old;
+                    return old.map(project =>
+                        project.id === tempId
+                            ? { ...project, id: data.projectId! }
+                            : project
+                    )
+                });
                 toast.success(data.message);
                 setOpen(false);
                 form.reset();
@@ -45,11 +75,11 @@ export function CreateProject({ trigger }: { trigger: ReactNode }) {
             } else {
                 toast.error(data.message);
             }
-            queryClient.invalidateQueries({
-                queryKey: orpc.project.list.queryKey({ input: { workspace_id: params.workspace_id } })
-            });
         },
-        onError: (error) => {
+        onError: (error, _variables, context) => {
+            if (context?.previousData) {
+                queryClient.setQueryData([context.projectListKey], context.previousData)
+            }
             toast.error(error.message || "Failed to create project");
         }
     }));
