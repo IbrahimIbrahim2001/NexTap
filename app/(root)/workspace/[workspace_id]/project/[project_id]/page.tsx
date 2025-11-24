@@ -1,6 +1,9 @@
+import Tiptap from "@/components/tiptap/tiptap";
 
 export default function Project() {
     return (
-        <div>sa;ldmsaf;l</div>
+        <div className="py-2 px-3">
+            <Tiptap />
+        </div>
     )
 }

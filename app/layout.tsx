@@ -27,7 +27,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning className='scroll-smooth'>
+    <html lang="en" suppressHydrationWarning className='scroll-smooth hide-scrollbar'>
       <meta name="apple-mobile-web-app-title" content="NexTap" />
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
