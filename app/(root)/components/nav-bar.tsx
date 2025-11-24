@@ -16,7 +16,7 @@ export function Navbar() {
     const { data: workspace } = authClient.useActiveOrganization();
     const { data: project, isLoading: isLoadingProject } = useQuery(orpc.project.get.queryOptions({ input: { workspace_id: params.workspace_id!, project_id: params.project_id! } }));
     return (
-        <nav className="w-full px-2 h-12 flex justify-between items-center border-b border-border">
+        <nav className="w-full px-2 h-12 flex justify-between items-center border-b border-border bg-background sticky top-0 left-0 z-50">
             <div className="flex items-center gap-2 px-4">
                 <SidebarTrigger className="-ml-4" />
                 <Separator
