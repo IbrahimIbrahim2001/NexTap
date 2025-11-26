@@ -26,6 +26,7 @@ import {
     Underline,
     Undo
 } from "lucide-react"
+import { SaveChangesButton } from "./save-changes"
 
 export default function MenuBar({ editor }: { editor: Editor | null }) {
     const editorState = useEditorState({
@@ -385,6 +386,7 @@ export default function MenuBar({ editor }: { editor: Editor | null }) {
 
             {/* Block Elements */}
             <BlockButtons />
+            <SaveChangesButton editor={editor} />
         </div>
     )
 }

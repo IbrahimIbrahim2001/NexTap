@@ -3,12 +3,15 @@
 import Highlight from '@tiptap/extension-highlight'
 import TextAlign from '@tiptap/extension-text-align'
 import Underline from '@tiptap/extension-underline'
-import { EditorContent, useEditor } from '@tiptap/react'
+import { Content, EditorContent, useEditor } from '@tiptap/react'
 import StarterKit from '@tiptap/starter-kit'
 import MenuBar from './menu-bar'
 
+interface TiptapProps {
+    content: unknown | undefined
+}
 
-const Tiptap = () => {
+const Tiptap = ({ content }: TiptapProps) => {
     const editor = useEditor({
         extensions: [
             StarterKit.configure({
@@ -38,13 +41,14 @@ const Tiptap = () => {
             }),
             Underline,
         ],
-        content: "<p>Start typing here...</p>",
+        content: content as Content,
         editorProps: {
             attributes: {
                 class: "min-h-[calc(100vh-190px)] border rounded-md py-2 px-3  prose prose-sm  focus:outline-none",
             },
         },
         autofocus: false,
+        immediatelyRender: false
     })
 
 
