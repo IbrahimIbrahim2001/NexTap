@@ -6,6 +6,7 @@ import { and, eq } from "drizzle-orm";
 import z from "zod";
 import { requiredAuthMiddleware } from "../middleware/auth-middleware";
 import { base } from "../middleware/base";
+import { updateProjectContentSchema } from "@/schemas/update-project-content-schema";
 
 export const createProject = base
     .route({
@@ -119,4 +120,50 @@ export const getProject = base
             )
         })
         return findProject;
+    })
+
+export const updateProjectContent = base
+    .use(requiredAuthMiddleware)
+    .route({
+        method: "POST",
+        path: "/update-project"
+    })
+    .input(updateProjectContentSchema)
+    .output(z.object({
+        success: z.boolean(),
+        project: z.custom<ProjectSchema>()
+    }))
+    .handler(async ({ context, input }) => {
+        const { workspace_id, project_id, newContent } = input;
+        const userId = context.user.id;
+        console.log("----------------------------------------------------------------------------", newContent);
+        const memberUser = await db.query.member.findFirst({
+            where: and(
+                eq(member.userId, userId),
+                eq(member.organizationId, workspace_id)
+            ),
+        });
+
+        if (!memberUser) {
+            throw new Error("User is not a member of this workspace");
+        }
+        const [updatedProject] = await db.update(project)
+            .set({
+                content: newContent,
+                updatedAt: new Date()
+            })
+            .where(and(
+                eq(project.organizationId, workspace_id),
+                eq(project.id, project_id)
+            ))
+            .returning();
+
+        if (!updatedProject) {
+            throw new Error("Project not found or update failed");
+        }
+
+        return {
+            success: true,
+            project: updatedProject
+        };
     })

@@ -210,3 +210,12 @@ body {
   font-size: 1.25rem;
   font-weight: bold;
 }
+
+.tiptap a {
+    color: #2563eb; /* blue-600 */
+    text-decoration: underline;
+}
+
+.tiptap a:hover {
+    color: #1e40af; /* blue-800 */
+}
