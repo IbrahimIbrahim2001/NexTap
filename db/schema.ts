@@ -13,7 +13,7 @@ export const user = pgTable("user", {
     .$onUpdate(() => /* @__PURE__ */ new Date())
     .notNull(),
 });
-
+export type UserSchema = typeof user.$inferSelect;
 export const userRelations = relations(user, ({ many }) => ({
   organization: many(organization),
 }));

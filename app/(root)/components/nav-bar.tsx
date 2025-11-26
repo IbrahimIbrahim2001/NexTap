@@ -7,9 +7,15 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 import { orpc } from "@/lib/orpc";
 import { useQuery } from "@tanstack/react-query";
+import { Settings } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Activity } from "react";
+import { lazy } from 'react';
+
+
+const LazyMemberList = lazy(() => import('./members-list'));
+
 
 export function Navbar() {
     const params = useParams<{ workspace_id: string, project_id: string }>()
@@ -49,7 +55,13 @@ export function Navbar() {
                     </Breadcrumb>
                 </Activity>
             </div>
-            <div className="pe-4">
+            <div className="flex items-center gap-x-4 pe-4">
+                <Activity mode={params.workspace_id ? "visible" : "hidden"}>
+                    <LazyMemberList workspace={workspace} />
+                    <div>
+                        <Settings className="size-4" />
+                    </div>
+                </Activity>
                 <ModeToggle />
             </div>
         </nav>
