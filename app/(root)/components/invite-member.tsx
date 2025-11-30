@@ -22,7 +22,7 @@ const formSchema = z.object({
     role: z.enum(["admin", "member"]),
 })
 
-export default function AddMember() {
+export default function InviteMember() {
     const { data: activeOrganization } = authClient.useActiveOrganization()
     const [open, setOpen] = useState(false);
     const form = useForm<z.infer<typeof formSchema>>({

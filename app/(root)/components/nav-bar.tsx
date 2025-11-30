@@ -7,19 +7,19 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 import { orpc } from "@/lib/orpc";
 import { useQuery } from "@tanstack/react-query";
-import { Settings } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
-import { Activity } from "react";
-import { lazy } from 'react';
+import { Activity, lazy } from "react";
+
 
 
 const LazyMemberList = lazy(() => import('./members-list'));
+const LazyWorkspaceSettings = lazy(() => import('./workspace-settings'));
 
 
 export function Navbar() {
     const params = useParams<{ workspace_id: string, project_id: string }>()
-    const { data: workspace } = authClient.useActiveOrganization();
+    const { data: workspace, isPending } = authClient.useActiveOrganization();
     const { data: project, isLoading: isLoadingProject } = useQuery(orpc.project.get.queryOptions({ input: { workspace_id: params.workspace_id!, project_id: params.project_id! } }));
     return (
         <nav className="w-full px-2 h-12 flex justify-between items-center border-b border-border bg-background sticky top-0 left-0 z-50">
@@ -36,7 +36,7 @@ export function Navbar() {
                                 <Link href={`/workspace/${workspace?.id}/project`}>
                                     {workspace?.name ?
                                         <p>{workspace?.name}</p>
-                                        : <Skeleton className="w-20 h-4 transition-all duration-200" />
+                                        : <Skeleton className="w-20 h-4" />
                                     }
                                 </Link>
                             </BreadcrumbItem>
@@ -45,7 +45,7 @@ export function Navbar() {
                                 <BreadcrumbItem>
                                     <BreadcrumbPage>
                                         {isLoadingProject ?
-                                            <Skeleton className="w-26 h-4 transition-all duration-200" />
+                                            <Skeleton className="w-26 h-4" />
                                             : <p>{project?.name}</p>
                                         }
                                     </BreadcrumbPage>
@@ -55,12 +55,10 @@ export function Navbar() {
                     </Breadcrumb>
                 </Activity>
             </div>
-            <div className="flex items-center gap-x-4 pe-4">
+            <div className="flex items-center gap-x-2 pe-4">
                 <Activity mode={params.workspace_id ? "visible" : "hidden"}>
-                    <LazyMemberList workspace={workspace} />
-                    <div>
-                        <Settings className="size-4" />
-                    </div>
+                    <LazyMemberList workspace={workspace} isPending={isPending} />
+                    <LazyWorkspaceSettings workspace={workspace} isPending={isPending} />
                 </Activity>
                 <ModeToggle />
             </div>

@@ -2,10 +2,11 @@
 import Link from 'next/link'
 import { Menu, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
-import React from 'react'
+import React, { Activity } from 'react'
 import { cn } from '@/lib/utils'
 import { ThemeSwitcher } from './kibo-ui/theme-switcher'
 import { Logo } from './logo'
+import { authClient } from '@/lib/auth-client'
 
 const menuItems = [
     { name: 'Features', href: '#features' },
@@ -24,6 +25,9 @@ export const HeroHeader = () => {
         window.addEventListener('scroll', handleScroll)
         return () => window.removeEventListener('scroll', handleScroll)
     }, [])
+
+    const session = authClient.useSession().data?.session;
+
     return (
         <header>
             <nav
@@ -77,15 +81,28 @@ export const HeroHeader = () => {
                             </div>
                             <div className="flex w-full flex-col space-y-3 sm:flex-row sm:gap-3 sm:space-y-0 md:w-fit">
                                 <ThemeSwitcher />
-                                <Button
-                                    asChild
-                                    variant="outline"
-                                    size="sm"
-                                    className={cn(isScrolled && 'lg:hidden')}>
-                                    <Link href="login">
-                                        <span>Login</span>
-                                    </Link>
-                                </Button>
+                                <Activity mode={session ? "hidden" : "visible"}>
+                                    <Button
+                                        asChild
+                                        variant="outline"
+                                        size="sm"
+                                        className={cn(isScrolled && 'lg:hidden')}>
+                                        <Link href="login">
+                                            <span>Login</span>
+                                        </Link>
+                                    </Button>
+                                </Activity>
+                                <Activity mode={session ? "visible" : "hidden"}>
+                                    <Button
+                                        asChild
+                                        variant="outline"
+                                        size="sm"
+                                        className={cn(isScrolled && 'lg:hidden')}>
+                                        <Link href="workspace">
+                                            <span>Dashboard</span>
+                                        </Link>
+                                    </Button>
+                                </Activity>
                                 <Button
                                     asChild
                                     size="sm"
