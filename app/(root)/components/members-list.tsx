@@ -23,6 +23,7 @@ import { useParams } from "next/navigation";
 import { Activity, useState } from "react";
 import { getBadgeColor, Role } from "../utils/get-role-badge-color";
 import { Loader } from "./loader";
+import AddMember from "./add-memeber";
 
 interface MembersListProps {
     workspace: Organization | null
@@ -57,6 +58,7 @@ export default function MembersList({ workspace }: MembersListProps) {
                     ))}
                 </div>
                 <SheetFooter>
+                    <AddMember />
                     <SheetClose asChild>
                         <Button variant="outline">Close</Button>
                     </SheetClose>
