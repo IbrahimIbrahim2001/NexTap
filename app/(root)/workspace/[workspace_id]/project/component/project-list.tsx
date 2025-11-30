@@ -53,6 +53,6 @@ export function ProjectList({ workspace_id }: { workspace_id: string }) {
                     />
                 </div>
             </div>
-        </div >
+        </div>
     )
 }

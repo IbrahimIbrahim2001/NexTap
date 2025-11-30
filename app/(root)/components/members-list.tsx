@@ -19,17 +19,27 @@ import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import { Organization } from "better-auth/plugins";
 import { Users } from "lucide-react";
-import { useParams } from "next/navigation";
+import { redirect, useParams } from "next/navigation";
 import { Activity, useState } from "react";
 import { getBadgeColor, Role } from "../utils/get-role-badge-color";
 import { Loader } from "./loader";
-import AddMember from "./add-memeber";
+import InviteMember from "./invite-member";
+import { Skeleton } from "@/components/ui/skeleton";
+
+import {
+    ContextMenu,
+    ContextMenuContent,
+    ContextMenuItem,
+    ContextMenuTrigger,
+} from "@/components/ui/context-menu"
+import { toast } from "sonner";
 
 interface MembersListProps {
+    isPending: boolean
     workspace: Organization | null
 }
 
-export default function MembersList({ workspace }: MembersListProps) {
+export default function MembersList({ workspace, isPending }: MembersListProps) {
     const [open, setOpen] = useState(false);
     const { workspace_id } = useParams<{ workspace_id: string }>()
     const { data: members, isLoading, error } = useQuery(orpc.workspace.members.list.queryOptions({ input: { workspace_id } }));
@@ -42,7 +52,13 @@ export default function MembersList({ workspace }: MembersListProps) {
             </SheetTrigger>
             <SheetContent>
                 <SheetHeader>
-                    <SheetTitle>{workspace?.name}&apos;s Members:</SheetTitle>
+                    <SheetTitle>{
+                        isPending ? <Skeleton className="w-26 h-4" /> :
+                            <>
+                                {workspace?.name}&apos;s Members:
+                            </>
+                    }
+                    </SheetTitle>
                 </SheetHeader>
                 <div className="h-full px-4">
                     {!workspace || !workspace_id || error &&
@@ -58,7 +74,7 @@ export default function MembersList({ workspace }: MembersListProps) {
                     ))}
                 </div>
                 <SheetFooter>
-                    <AddMember />
+                    <InviteMember />
                     <SheetClose asChild>
                         <Button variant="outline">Close</Button>
                     </SheetClose>
@@ -73,20 +89,60 @@ interface MemberProps {
 }
 
 function Member({ member }: MemberProps) {
-    const userId = authClient.useSession().data?.user.id
+    const userId = authClient.useSession().data?.user.id;
+    const [role, setRole] = useState<Role>(member.role as Role);
+    async function updateMemberRole(role: string) {
+        const { data, error } = await authClient.organization.updateMemberRole({
+            role: role,
+            memberId: member.id,
+            organizationId: member.organizationId,
+        });
+        if (data) {
+            setRole(role as Role);
+            toast.success("updated user role")
+        }
+        if (error) {
+            toast.error(error.message)
+        }
+    }
+
+    async function leaveOrganization() {
+        const { data, error } = await authClient.organization.removeMember({
+            memberIdOrEmail: member.id,
+            organizationId: member.organizationId,
+        });
+        if (data) {
+            toast.success("removed from organization");
+            redirect("/workspace")
+        }
+        if (error) {
+            toast.error(error.message)
+        }
+    }
+
     return (
-        <div className={cn("flex justify-between items-center p-2", userId === member.user.id && "bg-accent/50 rounded", "group hover:bg-muted")}>
-            <div className="flex items-center gap-x-2">
-                <Avatar className="size-8 rounded-lg">
-                    <AvatarImage src={member.user.image ?? undefined} alt={`${member.user.name} image`} />
-                    <AvatarFallback className="rounded-lg group-hover:bg-secondary/50 transition-all delay-75">{member.user.name.charAt(0).toLocaleUpperCase()}</AvatarFallback>
-                </Avatar>
-                <p>{member.user.name}</p>
-            </div>
-            <Badge className={`${getBadgeColor(member.role as Role)}`}>
-                {member.role}
-            </Badge>
-        </div>
+        <ContextMenu>
+            <ContextMenuTrigger>
+                <div className={cn("flex justify-between items-center p-2", userId === member.user.id && "bg-accent/50 rounded", "group hover:bg-muted")}>
+                    <div className="flex items-center gap-x-2">
+                        <Avatar className="size-8 rounded-lg">
+                            <AvatarImage src={member.user.image ?? undefined} alt={`${member.user.name} image`} />
+                            <AvatarFallback className="rounded-lg group-hover:bg-secondary/50 transition-all delay-75">{member.user.name.charAt(0).toLocaleUpperCase()}</AvatarFallback>
+                        </Avatar>
+                        <p>{member.user.name}</p>
+                    </div>
+                    <Badge className={`${getBadgeColor(role as Role)}`}>
+                        {role}
+                    </Badge>
+                </div>
+            </ContextMenuTrigger>
+            <ContextMenuContent>
+                <ContextMenuItem onClick={() => updateMemberRole("admin")}>Set to admin</ContextMenuItem>
+                <ContextMenuItem onClick={() => updateMemberRole("member")}>Set to member</ContextMenuItem>
+                <ContextMenuItem onClick={leaveOrganization}>Remove from workspace</ContextMenuItem>
+                <ContextMenuItem disabled>Notify</ContextMenuItem>
+            </ContextMenuContent>
+        </ContextMenu>
     )
 }
 
