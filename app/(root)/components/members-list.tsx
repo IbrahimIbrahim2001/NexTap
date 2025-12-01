@@ -60,7 +60,7 @@ export default function MembersList({ workspace, isPending }: MembersListProps) 
                     }
                     </SheetTitle>
                 </SheetHeader>
-                <div className="h-full px-4">
+                <div className="h-full px-4 overflow-y-scroll hide-scrollbar">
                     {!workspace || !workspace_id || error &&
                         <div className="flex justify-center">
                             <Badge variant="destructive">Error loading workspace info</Badge>

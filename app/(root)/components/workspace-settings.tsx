@@ -9,13 +9,13 @@ import {
     SheetTitle,
     SheetTrigger
 } from "@/components/ui/sheet";
-
 import { Skeleton } from "@/components/ui/skeleton";
 import { Organization } from "better-auth/plugins";
 import { Settings } from "lucide-react";
-
 import { useParams } from "next/navigation";
 import { useState } from "react";
+import { UpdateWorkspaceSlug } from "../workspace/components/update-workspace-slug";
+import { DeleteWorkspace } from "../workspace/components/delete-workspace";
 
 interface WorkspaceSettingsProps {
     isPending: boolean
@@ -41,12 +41,25 @@ export default function WorkspaceSettings({ workspace, isPending }: WorkspaceSet
                     }
                     </SheetTitle>
                 </SheetHeader>
-                <div className="h-full px-4">
+                <div className="h-full px-4 overflow-y-scroll hide-scrollbar space-y-4">
                     {!workspace || !workspace_id &&
                         <div className="flex justify-center">
                             <Badge variant="destructive">Error loading workspace info</Badge>
                         </div>
                     }
+                    <div className="border-2 rounded-lg p-3 space-y-2">
+                        <p className="mb-2">Update Workspace:</p>
+                        <div className="border-2 border-dashed rounded-lg p-3 hover:border-accent transition-all delay-75">
+                            <UpdateWorkspaceSlug workspaceSlug={workspace?.slug} />
+                        </div>
+                        {/* <div className="border-2 border-dashed rounded-lg p-3 hover:border-secondary transition-all delay-75">
+                            <UpdateOrganizationSlug workspaceSlug={workspace?.slug} />
+                        </div> this is for logo */}
+                    </div>
+                    <div className="border-2 border-destructive/50 rounded-lg p-3 space-y-2">
+                        <p className="mb-2">Delete Workspace:</p>
+                        <DeleteWorkspace handleOpen={() => setOpen(false)} />
+                    </div>
                 </div>
                 <SheetFooter>
                     <SheetClose asChild>
@@ -57,3 +70,6 @@ export default function WorkspaceSettings({ workspace, isPending }: WorkspaceSet
         </Sheet>
     )
 }
+
+
+

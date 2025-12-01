@@ -11,8 +11,6 @@ import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Activity, lazy } from "react";
 
-
-
 const LazyMemberList = lazy(() => import('./members-list'));
 const LazyWorkspaceSettings = lazy(() => import('./workspace-settings'));
 
@@ -20,6 +18,9 @@ const LazyWorkspaceSettings = lazy(() => import('./workspace-settings'));
 export function Navbar() {
     const params = useParams<{ workspace_id: string, project_id: string }>()
     const { data: workspace, isPending } = authClient.useActiveOrganization();
+    //react query +  const { data: { role }, error } = await authClient.organization.getActiveMemberRole(); // to get the user role
+    // project status (in-progress, finished)??? 
+
     const { data: project, isLoading: isLoadingProject } = useQuery(orpc.project.get.queryOptions({ input: { workspace_id: params.workspace_id!, project_id: params.project_id! } }));
     return (
         <nav className="w-full px-2 h-12 flex justify-between items-center border-b border-border bg-background sticky top-0 left-0 z-50">
