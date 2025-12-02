@@ -4,6 +4,8 @@ import { useTheme } from 'next-themes';
 import Link from 'next/link';
 import { ProjectSchema } from '@/db/schema';
 import { ChevronRight } from 'lucide-react';
+import { Badge } from '@/components/ui/badge';
+import { getProjectStatusBadgeBorderColor, getProjectStatusBadgeTextColor } from '@/app/(root)/utils/get-role-badge-color';
 
 interface ProjectProps {
     project: ProjectSchema
@@ -31,11 +33,13 @@ export function Project({ project }: ProjectProps) {
                                     </div>
                                 </div>
                                 <div className="flex-1 min-w-0">
-                                    <h3 className="text-lg font-semibold text-foreground truncate drop-shadow-sm">
+                                    <h3 className="flex items-center gap-x-2 text-lg font-semibold text-foreground truncate drop-shadow-sm">
                                         {project.name}
                                     </h3>
                                     <p className="text-sm text-muted-foreground/80 truncate mt-1 font-medium">
-                                        Explore project
+                                        <Badge variant="outline" className={`${getProjectStatusBadgeBorderColor(project.status)} ${getProjectStatusBadgeTextColor(project.status)}`}>
+                                            {project.status}
+                                        </Badge>
                                     </p>
                                 </div>
                                 <div className="text-white/70 group-hover:text-white group-hover:translate-x-1 transition-all duration-300">

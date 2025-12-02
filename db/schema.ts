@@ -1,5 +1,5 @@
 import { relations } from "drizzle-orm";
-import { pgTable, text, timestamp, boolean, jsonb } from "drizzle-orm/pg-core";
+import { pgTable, text, timestamp, boolean, jsonb, pgEnum } from "drizzle-orm/pg-core";
 
 export const user = pgTable("user", {
   id: text("id").primaryKey(),
@@ -103,6 +103,8 @@ export const invitation = pgTable("invitation", {
 });
 
 
+export const statusEnum = pgEnum('status', ['in progress', 'finished']);
+
 export const project = pgTable("project", {
   id: text("id").primaryKey(),
   organizationId: text("organization_id")
@@ -112,6 +114,7 @@ export const project = pgTable("project", {
   name: text('name').notNull().unique(),
   content: jsonb('content'),
   icon: text('icon'),
+  status: statusEnum().default('in progress'),
 
   createdAt: timestamp("created_at").notNull(),
   updatedAt: timestamp('updated_at').defaultNow(),

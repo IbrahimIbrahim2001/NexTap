@@ -48,6 +48,7 @@ export function CreateProject({ trigger }: { trigger: ReactNode }) {
                 icon: data.icon ?? selectedIcon,
                 createdAt: new Date(),
                 updatedAt: new Date(),
+                status: "in progress",
                 organizationId: activeWorkspace?.id || params.workspace_id,
                 content: ""
             } satisfies ProjectSchema

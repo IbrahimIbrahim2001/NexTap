@@ -1,5 +1,6 @@
 "use client";
 import { ModeToggle } from "@/components/mode-toggle";
+import { Badge } from "@/components/ui/badge";
 import { Breadcrumb, BreadcrumbItem, BreadcrumbList, BreadcrumbPage, BreadcrumbSeparator } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import { SidebarTrigger } from "@/components/ui/sidebar";
@@ -10,6 +11,8 @@ import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Activity, lazy } from "react";
+import { getBadgeBorderColor, getBadgeTextColor, getProjectStatusBadgeColor, Role } from "../utils/get-role-badge-color";
+import { Loader2 } from "lucide-react";
 
 const LazyMemberList = lazy(() => import('./members-list'));
 const LazyWorkspaceSettings = lazy(() => import('./workspace-settings'));
@@ -18,8 +21,13 @@ const LazyWorkspaceSettings = lazy(() => import('./workspace-settings'));
 export function Navbar() {
     const params = useParams<{ workspace_id: string, project_id: string }>()
     const { data: workspace, isPending } = authClient.useActiveOrganization();
-    //react query +  const { data: { role }, error } = await authClient.organization.getActiveMemberRole(); // to get the user role
-    // project status (in-progress, finished)??? 
+    const { data: memberRole, isLoading: isLoadingMemberRole } = useQuery({
+        queryKey: ["member-role", params.project_id],
+        queryFn: async () => {
+            const { data } = await authClient.organization.getActiveMemberRole();
+            if (data?.role) return data.role;
+        }
+    })
 
     const { data: project, isLoading: isLoadingProject } = useQuery(orpc.project.get.queryOptions({ input: { workspace_id: params.workspace_id!, project_id: params.project_id! } }));
     return (
@@ -54,6 +62,25 @@ export function Navbar() {
                             </Activity>
                         </BreadcrumbList>
                     </Breadcrumb>
+                </Activity>
+            </div>
+            <div className="flex items-center gap-x-2">
+                <Activity mode={params.workspace_id ? "visible" : "hidden"}>
+                    <Badge variant="outline" className={`${getBadgeBorderColor(memberRole as Role)} ${getBadgeTextColor(memberRole as Role)}`}>
+                        {isLoadingMemberRole ?
+                            <Loader2 className="size-4 animate-spin" />
+                            : memberRole
+                        }
+                    </Badge>
+                    <Activity mode={(params.project_id && isLoadingProject) || project ? "visible" : "hidden"}>
+                        <Separator
+                            orientation="vertical"
+                            className="data-[orientation=vertical]:h-4"
+                        />
+                        <Badge className={`${getProjectStatusBadgeColor(project?.status)}`}>
+                            {project?.status}
+                        </Badge>
+                    </Activity>
                 </Activity>
             </div>
             <div className="flex items-center gap-x-2 pe-4">
