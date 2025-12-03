@@ -16,6 +16,7 @@ import { useParams } from "next/navigation";
 import { useState } from "react";
 import { UpdateWorkspaceSlug } from "../workspace/components/update-workspace-slug";
 import { DeleteWorkspace } from "../workspace/components/delete-workspace";
+import { UploadWorkSpaceLogo } from "./upload-workspace-logo";
 
 interface WorkspaceSettingsProps {
     isPending: boolean
@@ -52,9 +53,10 @@ export default function WorkspaceSettings({ workspace, isPending }: WorkspaceSet
                         <div className="border-2 border-dashed rounded-lg p-3 hover:border-accent transition-all delay-75">
                             <UpdateWorkspaceSlug workspaceSlug={workspace?.slug} />
                         </div>
-                        {/* <div className="border-2 border-dashed rounded-lg p-3 hover:border-secondary transition-all delay-75">
-                            <UpdateOrganizationSlug workspaceSlug={workspace?.slug} />
-                        </div> this is for logo */}
+                        <div className="border-2 border-dashed rounded-lg p-3 hover:border-secondary transition-all delay-75">
+                            <p className="text-sm mb-2">upload workspace logo:</p>
+                            <UploadWorkSpaceLogo workspaceLogo={workspace?.logo} />
+                        </div>
                     </div>
                     <div className="border-2 border-destructive/50 rounded-lg p-3 space-y-2">
                         <p className="mb-2">Delete Workspace:</p>
@@ -70,6 +72,3 @@ export default function WorkspaceSettings({ workspace, isPending }: WorkspaceSet
         </Sheet>
     )
 }
-
-
-
