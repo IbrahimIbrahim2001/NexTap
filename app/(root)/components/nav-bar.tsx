@@ -8,14 +8,16 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { authClient } from "@/lib/auth-client";
 import { orpc } from "@/lib/orpc";
 import { useQuery } from "@tanstack/react-query";
+import { Loader2 } from "lucide-react";
 import Link from "next/link";
 import { useParams } from "next/navigation";
 import { Activity, lazy } from "react";
 import { getBadgeBorderColor, getBadgeTextColor, getProjectStatusBadgeColor, Role } from "../utils/get-role-badge-color";
-import { Loader2 } from "lucide-react";
 
 const LazyMemberList = lazy(() => import('./members-list'));
 const LazyWorkspaceSettings = lazy(() => import('./workspace-settings'));
+const LazyTodoList = lazy(() => import('./todo-list'));
+
 
 
 export function Navbar() {
@@ -87,6 +89,7 @@ export function Navbar() {
                 <Activity mode={params.workspace_id ? "visible" : "hidden"}>
                     <LazyMemberList workspace={workspace} isPending={isPending} />
                     <LazyWorkspaceSettings workspace={workspace} isPending={isPending} />
+                    <LazyTodoList workspace={workspace} isPending={isPending} />
                 </Activity>
                 <ModeToggle />
             </div>

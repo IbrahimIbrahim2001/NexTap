@@ -17,6 +17,7 @@ import { useState } from "react";
 import { UpdateWorkspaceSlug } from "../workspace/components/update-workspace-slug";
 import { DeleteWorkspace } from "../workspace/components/delete-workspace";
 import { UploadWorkSpaceLogo } from "./upload-workspace-logo";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 
 interface WorkspaceSettingsProps {
     isPending: boolean
@@ -27,11 +28,18 @@ export default function WorkspaceSettings({ workspace, isPending }: WorkspaceSet
     const { workspace_id } = useParams<{ workspace_id: string }>()
     return (
         <Sheet open={open} onOpenChange={setOpen}>
-            <SheetTrigger asChild>
-                <Button variant="ghost">
-                    <Settings className="size-4" />
-                </Button>
-            </SheetTrigger>
+            <Tooltip>
+                <TooltipTrigger asChild>
+                    <SheetTrigger asChild>
+                        <Button variant="ghost">
+                            <Settings className="size-4" />
+                        </Button>
+                    </SheetTrigger>
+                </TooltipTrigger>
+                <TooltipContent>
+                    settings
+                </TooltipContent>
+            </Tooltip>
             <SheetContent>
                 <SheetHeader>
                     <SheetTitle>{

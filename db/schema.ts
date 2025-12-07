@@ -122,4 +122,22 @@ export const project = pgTable("project", {
 
 export type ProjectSchema = typeof project.$inferSelect
 
-export const schema = { user, session, account, verification, organization, member, invitation, project };
+
+export const todoStatusEnum = pgEnum('todo_status', ["to do", 'in progress', 'done']);
+
+export const todos = pgTable("todos", {
+  id: text("id").primaryKey().notNull(),
+  organizationId: text("organization_id")
+    .notNull()
+    .references(() => organization.id, { onDelete: "cascade" }),
+  content: text('content').notNull(),
+  assigned_to: text('assigned_to')
+    .references(() => user.id, { onDelete: "cascade" }),
+  status: todoStatusEnum().default('to do'),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp('updated_at').defaultNow().$onUpdate(() => new Date()),
+})
+
+export type TodoSchema = typeof todos.$inferSelect
+
+export const schema = { user, session, account, verification, organization, member, invitation, project, todos };
