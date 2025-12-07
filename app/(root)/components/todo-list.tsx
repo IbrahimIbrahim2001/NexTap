@@ -1,6 +1,4 @@
 "use client";
-
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
     Sheet,
@@ -15,34 +13,33 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { orpc } from "@/lib/orpc";
 import { useQuery } from "@tanstack/react-query";
 import { Organization } from "better-auth/plugins";
-import { Users } from "lucide-react";
+import { ListTodo } from "lucide-react";
 import { useParams } from "next/navigation";
-import { Activity, useState } from "react";
-import InviteMember from "./invite-member";
-import { Loader } from "./loader";
-import { Member } from "./member";
+import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-interface MembersListProps {
+import { Badge } from "@/components/ui/badge";
+import { getTaskStatusBadgeBorderColor } from "../utils/get-role-badge-color";
+interface TodoListProps {
     isPending: boolean
     workspace: Organization | null
 }
 
-export default function MembersList({ workspace, isPending }: MembersListProps) {
+export default function TodoList({ workspace, isPending }: TodoListProps) {
     const [open, setOpen] = useState(false);
     const { workspace_id } = useParams<{ workspace_id: string }>()
-    const { data: members, isLoading, error } = useQuery(orpc.workspace.members.list.queryOptions({ input: { workspace_id } }));
+    const { data: tasks } = useQuery(orpc.workspace.tasks.list.queryOptions({ input: { workspace_id } }));
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <Tooltip>
                 <TooltipTrigger asChild>
                     <SheetTrigger asChild>
                         <Button variant="ghost">
-                            <Users className="size-4" />
+                            <ListTodo className="size-4" />
                         </Button>
                     </SheetTrigger>
                 </TooltipTrigger>
                 <TooltipContent>
-                    member list
+                    workspace tasks
                 </TooltipContent>
             </Tooltip>
             <SheetContent>
@@ -50,26 +47,33 @@ export default function MembersList({ workspace, isPending }: MembersListProps) 
                     <SheetTitle>{
                         isPending ? <Skeleton className="w-26 h-4" /> :
                             <>
-                                {workspace?.name}&apos;s Members:
+                                {workspace?.name}&apos;s Todo list:
                             </>
                     }
                     </SheetTitle>
                 </SheetHeader>
-                <div className="h-full px-4 overflow-y-scroll hide-scrollbar">
-                    {!workspace || !workspace_id || error &&
-                        <div className="flex justify-center">
-                            <Badge variant="destructive">Error loading workspace info</Badge>
+                {/* list of todos */}
+                <div className="space-y-3 px-4 h-full overflow-y-scroll hide-scrollbar">
+                    {tasks?.map((task) => (
+                        <div
+                            key={task.id}
+                            className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors"
+                        >
+                            <div className="flex-1 min-w-0">
+                                <p className="text-sm  font-semibold text-left wrap-break-word whitespace-normal">
+                                    {task.content}
+                                </p>
+                                <p className="text-xs text-muted-foreground mt-1">
+                                    Assigned to: {task.member?.name}
+                                </p>
+                            </div>
+                            <Badge className={`${getTaskStatusBadgeBorderColor(task.status)}`}>
+                                {task.status}
+                            </Badge>
                         </div>
-                    }
-                    <Activity mode={isLoading ? "visible" : "hidden"}>
-                        <Loader />
-                    </Activity>
-                    {members?.map(member => (
-                        <Member key={member.id} member={member} />
                     ))}
                 </div>
                 <SheetFooter>
-                    <InviteMember />
                     <SheetClose asChild>
                         <Button variant="outline">Close</Button>
                     </SheetClose>
@@ -78,5 +82,3 @@ export default function MembersList({ workspace, isPending }: MembersListProps) 
         </Sheet>
     )
 }
-
-

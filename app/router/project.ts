@@ -136,7 +136,6 @@ export const updateProjectContent = base
     .handler(async ({ context, input }) => {
         const { workspace_id, project_id, newContent } = input;
         const userId = context.user.id;
-        console.log("----------------------------------------------------------------------------", newContent);
         const memberUser = await db.query.member.findFirst({
             where: and(
                 eq(member.userId, userId),

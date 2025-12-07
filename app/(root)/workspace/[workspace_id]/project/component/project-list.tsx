@@ -39,7 +39,7 @@ export function ProjectList({ workspace_id }: { workspace_id: string }) {
         <div className=" px-6 py-8 w-full">
             <p className="text-lg font-semibold mb-4">Your Projects:</p>
             <div className="flex items-center justify-center">
-                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 w-full">
+                <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full">
                     {projects?.map((project) => (
                         <Project key={project.id} project={project} />
                     ))}

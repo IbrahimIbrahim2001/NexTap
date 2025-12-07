@@ -1,4 +1,4 @@
-import { ProjectSchema } from "@/db/schema";
+import { ProjectSchema, TodoSchema } from "@/db/schema";
 
 export type Role = "owner" | "admin" | "member";
 export function getBadgeColor(role: Role): string {
@@ -52,5 +52,14 @@ export function getProjectStatusBadgeTextColor(status: ProjectSchema["status"] |
         case "in progress": return "text-secondary";
         case "finished": return "text-destructive";
         default: return "text-secondary";
+    }
+}
+
+export function getTaskStatusBadgeBorderColor(status: TodoSchema["status"] | undefined): string {
+    switch (status) {
+        case "to do": return "bg-primary";
+        case "in progress": return "bg-secondary";
+        case "done": return "bg-accent"
+        default: return "bg-primary";
     }
 }
