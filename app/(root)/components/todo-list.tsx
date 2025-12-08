@@ -13,12 +13,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { orpc } from "@/lib/orpc";
 import { useQuery } from "@tanstack/react-query";
 import { Organization } from "better-auth/plugins";
-import { ListTodo } from "lucide-react";
+import { ListTodo, Search } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
 import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Badge } from "@/components/ui/badge";
 import { getTaskStatusBadgeBorderColor } from "../utils/get-role-badge-color";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 interface TodoListProps {
     isPending: boolean
     workspace: Organization | null
@@ -26,8 +27,15 @@ interface TodoListProps {
 
 export default function TodoList({ workspace, isPending }: TodoListProps) {
     const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState<string>("");
     const { workspace_id } = useParams<{ workspace_id: string }>()
     const { data: tasks } = useQuery(orpc.workspace.tasks.list.queryOptions({ input: { workspace_id } }));
+
+    const query = search.trim().toLocaleLowerCase();
+    const filteredTasks = query ? tasks?.filter((task => {
+        const content = task.content.toLocaleLowerCase();
+        return content.includes(query);
+    })) : tasks;
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <Tooltip>
@@ -54,7 +62,15 @@ export default function TodoList({ workspace, isPending }: TodoListProps) {
                 </SheetHeader>
                 {/* list of todos */}
                 <div className="space-y-3 px-4 h-full overflow-y-scroll hide-scrollbar">
-                    {tasks?.map((task) => (
+                    <div className="mb-4 mt-2 pb-4 border-b">
+                        <InputGroup>
+                            <InputGroupInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search task..." className="pl-9 rounded" />
+                            <InputGroupAddon>
+                                <Search />
+                            </InputGroupAddon>
+                        </InputGroup>
+                    </div>
+                    {filteredTasks?.map((task) => (
                         <div
                             key={task.id}
                             className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors"

@@ -2,6 +2,7 @@
 
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import {
     Sheet,
     SheetClose,
@@ -12,16 +13,17 @@ import {
     SheetTrigger
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { orpc } from "@/lib/orpc";
 import { useQuery } from "@tanstack/react-query";
 import { Organization } from "better-auth/plugins";
-import { Users } from "lucide-react";
+import { Search, Users } from "lucide-react";
 import { useParams } from "next/navigation";
 import { Activity, useState } from "react";
 import InviteMember from "./invite-member";
 import { Loader } from "./loader";
 import { Member } from "./member";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+
 interface MembersListProps {
     isPending: boolean
     workspace: Organization | null
@@ -29,8 +31,19 @@ interface MembersListProps {
 
 export default function MembersList({ workspace, isPending }: MembersListProps) {
     const [open, setOpen] = useState(false);
+    const [search, setSearch] = useState<string>("");
     const { workspace_id } = useParams<{ workspace_id: string }>()
     const { data: members, isLoading, error } = useQuery(orpc.workspace.members.list.queryOptions({ input: { workspace_id } }));
+
+    const query = search?.trim().toLocaleLowerCase();
+
+    const filteredMembers = query ? members?.filter((member) => {
+        const name = member.user.name.toLocaleLowerCase();
+        const email = member.user.email.toLocaleLowerCase();
+        return name.includes(query) || email.includes(query);
+    })
+        : members;
+
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <Tooltip>
@@ -61,10 +74,18 @@ export default function MembersList({ workspace, isPending }: MembersListProps) 
                             <Badge variant="destructive">Error loading workspace info</Badge>
                         </div>
                     }
+                    <div className="mb-4 mt-2 pb-4 border-b">
+                        <InputGroup>
+                            <InputGroupInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search member by name or email..." className="pl-9 rounded" />
+                            <InputGroupAddon>
+                                <Search />
+                            </InputGroupAddon>
+                        </InputGroup>
+                    </div>
                     <Activity mode={isLoading ? "visible" : "hidden"}>
                         <Loader />
                     </Activity>
-                    {members?.map(member => (
+                    {filteredMembers?.map(member => (
                         <Member key={member.id} member={member} />
                     ))}
                 </div>

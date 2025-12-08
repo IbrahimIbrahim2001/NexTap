@@ -13,7 +13,11 @@ interface ProjectDetails {
 export function ProjectDetails({ workspace_id, project_id }: ProjectDetails) {
     const { data: project, isError, isLoading } = useQuery(orpc.project.get.queryOptions({ input: { workspace_id, project_id } }))
     if (isError) return <>Error</>
-    if (isLoading) return <Loader />
+    if (isLoading) return (
+        <div className="h-[calc(100vh-4em)] grid place-content-center justify-center">
+            <Loader />
+        </div>
+    )
     return (
         <>
             <Tiptap content={project?.content ?? ""} />
