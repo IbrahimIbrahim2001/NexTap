@@ -58,7 +58,7 @@ export function Member({ member }: MemberProps) {
     return (
         <ContextMenu>
             <ContextMenuTrigger asChild>
-                <div className={cn("flex justify-between items-center p-2", userId === member.user.id && "bg-accent/50 rounded", "group hover:bg-muted")}>
+                <div className={cn("flex justify-between items-center my-2 p-2 rounded", userId === member.user.id && "bg-accent/50", "group hover:bg-muted")}>
                     <div className="flex items-center gap-x-2">
                         <Avatar className="size-8 rounded-lg">
                             <AvatarImage src={member.user.image ?? undefined} alt={`${member.user.name} image`} />

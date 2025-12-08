@@ -19,7 +19,7 @@ export function useAttachmentUpload() {
             stagedUrl,
             setStageUrl,
             isUploading,
-            setUploading
+            setUploading,
         }),
         [isOpen, setOpen, onUploaded, stagedUrl, setStageUrl, isUploading, setUploading]
     )

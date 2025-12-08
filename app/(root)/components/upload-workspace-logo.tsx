@@ -1,4 +1,5 @@
 "use client";
+import type { OurFileRouter } from "@/app/api/uploadthing/core";
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -10,22 +11,21 @@ import {
     DialogTitle,
     DialogTrigger,
 } from "@/components/ui/dialog";
-import { UploadDropzone } from "@uploadthing/react";
-import { toast } from "sonner";
-import { useAttachmentUpload } from "../use-attachment-upload";
-import type { OurFileRouter } from "@/app/api/uploadthing/core";
-import Image from "next/image";
-import { Activity } from "react";
-import { authClient } from "@/lib/auth-client";
-import { useParams } from "next/navigation";
 import { Spinner } from "@/components/ui/spinner";
+import { authClient } from "@/lib/auth-client";
+import { UploadDropzone } from "@uploadthing/react";
+import { X } from "lucide-react";
+import Image from "next/image";
+import { useParams } from "next/navigation";
+import { Activity } from "react";
+import { toast } from "sonner";
+import { useAttachmentUpload } from "../workspace/[workspace_id]/hooks/use-attachment-upload";
+;
 
 export function UploadWorkSpaceLogo({ workspaceLogo }: { workspaceLogo: string | undefined | null }) {
     const upload = useAttachmentUpload();
     const { workspace_id } = useParams<{ workspace_id: string }>()
-
     const handleUploadLogo = async () => {
-        upload.setUploading(true);
         await authClient.organization.update({
             data: {
                 logo: upload.stagedUrl as string,
@@ -33,8 +33,26 @@ export function UploadWorkSpaceLogo({ workspaceLogo }: { workspaceLogo: string |
             organizationId: workspace_id,
         }, {
             onSuccess: () => {
-                upload.setOpen(false);
+                upload.setOpen(false);;
                 upload.setUploading(false);
+            }
+        });
+
+    }
+
+    const deleteLogo = async () => {
+        await authClient.organization.update({
+            data: {
+                logo: "",
+            },
+            organizationId: workspace_id,
+        }, {
+            onSuccess: () => {
+                upload.setOpen(false);
+                toast.success("Deleted logo successfully")
+            },
+            onError: () => {
+                toast.error("Failed to delete logo")
             }
         });
     }
@@ -43,6 +61,8 @@ export function UploadWorkSpaceLogo({ workspaceLogo }: { workspaceLogo: string |
         upload.setOpen(false);
         upload.setStageUrl(null);
     }
+
+
     return (
         <Dialog open={upload.isOpen} onOpenChange={upload.setOpen}>
             <DialogTrigger asChild>
@@ -78,13 +98,19 @@ export function UploadWorkSpaceLogo({ workspaceLogo }: { workspaceLogo: string |
                     }}
                 />
                 <Activity mode={upload?.stagedUrl || workspaceLogo ? "visible" : "hidden"}>
-                    <Image
-                        src={(upload?.stagedUrl || workspaceLogo || "/placeholder-image.png") as string}
-                        alt="workspace logo"
-                        width={100}
-                        height={100}
-                        className="rounded-lg border-2 hover:border-primary transition-colors delay-75"
-                    />
+                    <div className="relative w-fit">
+                        <Image
+
+                            src={((upload?.stagedUrl || workspaceLogo)?.trimStart() ?? undefined) as string}
+                            alt="workspace logo"
+                            width={100}
+                            height={100}
+                            className="rounded-lg border-2 hover:border-primary transition-colors delay-75 "
+                        />
+                        <Button type="button" variant='destructive' size="icon-xs" className=" absolute -top-2 -right-2 rounded-lg bg-destructive hover:bg-destructive/80" onClick={deleteLogo}>
+                            <X className="size-4" />
+                        </Button>
+                    </div>
                 </Activity>
                 <DialogFooter>
                     <DialogClose onClick={handleClose} asChild>

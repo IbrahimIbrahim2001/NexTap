@@ -2,7 +2,6 @@
 
 import {
     Folder,
-    Forward,
     MoreHorizontal,
     Plus,
     Trash2
@@ -32,11 +31,12 @@ import { orpc } from "@/lib/orpc";
 import { cn } from "@/lib/utils";
 import { useQuery } from "@tanstack/react-query";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { CreateProject } from "../workspace/[workspace_id]/project/component/create-project";
 export function WorkspaceProjects() {
     const { isMobile } = useSidebar();
     const params = useParams<{ workspace_id: string, project_id: string }>();
+    const router = useRouter();
     const { data: activeWorkspace } = authClient.useActiveOrganization();
     const { data: projects, isLoading, isError } = useQuery(
         orpc.project.list.queryOptions({
@@ -130,14 +130,14 @@ export function WorkspaceProjects() {
                                         side={isMobile ? "bottom" : "right"}
                                         align={isMobile ? "end" : "start"}
                                     >
-                                        <DropdownMenuItem>
+                                        <DropdownMenuItem onClick={() => router.push("/workspace/" + project.organizationId + "/project/" + project.id)}>
                                             <Folder className="text-muted-foreground" />
                                             <span>View Project</span>
                                         </DropdownMenuItem>
-                                        <DropdownMenuItem>
+                                        {/* <DropdownMenuItem>
                                             <Forward className="text-muted-foreground" />
                                             <span>Share Project</span>
-                                        </DropdownMenuItem>
+                                        </DropdownMenuItem> */}
                                         <DropdownMenuSeparator />
                                         <DropdownMenuItem>
                                             <Trash2 className="text-muted-foreground" />
