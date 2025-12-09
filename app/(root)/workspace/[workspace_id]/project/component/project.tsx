@@ -14,7 +14,7 @@ interface ProjectProps {
 export function Project({ project }: ProjectProps) {
     const { theme } = useTheme()
     return (
-        <Link href={`project/${project.id}`}>
+        <Link prefetch={true} href={`project/${project.id}`}>
             <div className="flex">
                 <Card className="w-full max-w-sm border-none p-0 shadow-none hover:scale-105 transition-transform duration-300">
                     <MagicCard

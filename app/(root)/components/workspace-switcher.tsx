@@ -65,13 +65,13 @@ export function WorkspaceSwitcher() {
                     >
                         <DropdownMenuLabel asChild className="text-muted-foreground text-xs">
                             <Button variant="link" onClick={() => setOpen(false)} className="h-8">
-                                <Link href="/workspace">
+                                <Link prefetch={true} href="/workspace">
                                     Workspaces
                                 </Link>
                             </Button>
                         </DropdownMenuLabel>
                         {workspaces?.map((workspace, index) => (
-                            <Link href={`/workspace/${workspace.id}/project`} key={workspace.id}>
+                            <Link prefetch={true} href={`/workspace/${workspace.id}/project`} key={workspace.id}>
                                 <DropdownMenuItem
                                     onClick={() => setActiveWorkspace(workspace)}
                                     className="gap-3 p-2"

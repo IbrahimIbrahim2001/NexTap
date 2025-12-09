@@ -32,8 +32,11 @@ export default function TodoList({ workspace, isPending }: TodoListProps) {
 
     const query = search.trim().toLocaleLowerCase();
     const filteredTasks = query ? tasks?.filter((task => {
+        const memberName = task.member?.name.toLocaleLowerCase();
+        const memberEmail = task.member?.email.toLocaleLowerCase();
+        const status = task.status?.toLocaleLowerCase();
         const content = task.content.toLocaleLowerCase();
-        return content.includes(query);
+        return memberName?.includes(query) || memberEmail?.includes(query) || status?.includes(query) || content.includes(query);
     })) : tasks;
     return (
         <Sheet open={open} onOpenChange={setOpen}>
