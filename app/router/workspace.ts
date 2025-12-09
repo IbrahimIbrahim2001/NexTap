@@ -1,13 +1,12 @@
 import { db } from "@/db/drizzle";
 import { member, organization, todos, TodoSchema, user, UserSchema } from "@/db/schema";
+import { createTaskSchema } from "@/schemas/create-task-schema";
+import { generateId } from "better-auth";
 import { Member, Organization } from "better-auth/plugins";
 import { and, eq, inArray } from "drizzle-orm";
 import { z } from "zod";
 import { requiredAuthMiddleware } from "../middleware/auth-middleware";
 import { base } from "../middleware/base";
-import { createTaskSchema } from "@/schemas/create-task-schema";
-import { generateId } from "better-auth";
-
 
 export const workspaceList = base
     .use(requiredAuthMiddleware)
@@ -158,3 +157,58 @@ export const todoList = base
             member: row.user
         }));
     });
+
+
+export const updateTodoStatus = base.
+    use(requiredAuthMiddleware)
+    .route({
+        method: "PUT",
+        path: "/:workspace_id/task/update"
+    })
+    .input(z.object({
+        workspace_id: z.string(),
+        task_id: z.string(),
+        status: z.custom<TodoSchema["status"]>()
+    }))
+    .output(z.object({
+        success: z.boolean()
+    }))
+    .handler(async ({ input, context, errors }) => {
+        const { workspace_id, task_id, status } = input;
+        const user_id = context.user.id;
+        try {
+            const memberUser = await db.query.member.findFirst({
+                where: and(
+                    eq(member.userId, user_id),
+                    eq(member.organizationId, workspace_id)
+                ),
+            });
+            if (!memberUser) {
+                throw errors.FORBIDDEN()
+            }
+
+            const task = await db.query.todos.findFirst({
+                where: and(
+                    eq(todos.id, task_id),
+                    eq(todos.organizationId, workspace_id)
+                ),
+            });
+
+            if (!task) {
+                throw errors.NOT_FOUND();
+            }
+
+            const result = await db.update(todos).set({
+                status,
+            }).where(and(
+                eq(todos.id, task_id),
+                eq(todos.organizationId, workspace_id)
+            ))
+            if (result.rowCount === 0) {
+                throw errors.NOT_FOUND()
+            }
+            return { success: true };
+        } catch {
+            throw errors.INTERNAL_SERVER_ERROR()
+        }
+    })

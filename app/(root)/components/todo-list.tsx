@@ -1,5 +1,6 @@
 "use client";
 import { Button } from "@/components/ui/button";
+import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
 import {
     Sheet,
     SheetClose,
@@ -10,16 +11,14 @@ import {
     SheetTrigger
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { orpc } from "@/lib/orpc";
 import { useQuery } from "@tanstack/react-query";
 import { Organization } from "better-auth/plugins";
 import { ListTodo, Search } from "lucide-react";
 import { useParams } from "next/navigation";
 import { useState } from "react";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
-import { Badge } from "@/components/ui/badge";
-import { getTaskStatusBadgeBorderColor } from "../utils/get-role-badge-color";
-import { InputGroup, InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
+import { Todo } from "./todo";
 interface TodoListProps {
     isPending: boolean
     workspace: Organization | null
@@ -71,22 +70,7 @@ export default function TodoList({ workspace, isPending }: TodoListProps) {
                         </InputGroup>
                     </div>
                     {filteredTasks?.map((task) => (
-                        <div
-                            key={task.id}
-                            className="flex items-center gap-3 p-3 rounded-lg border hover:bg-muted/50 transition-colors"
-                        >
-                            <div className="flex-1 min-w-0">
-                                <p className="text-sm  font-semibold text-left wrap-break-word whitespace-normal">
-                                    {task.content}
-                                </p>
-                                <p className="text-xs text-muted-foreground mt-1">
-                                    Assigned to: {task.member?.name}
-                                </p>
-                            </div>
-                            <Badge className={`${getTaskStatusBadgeBorderColor(task.status)}`}>
-                                {task.status}
-                            </Badge>
-                        </div>
+                        <Todo key={task.id} task={task} />
                     ))}
                 </div>
                 <SheetFooter>
