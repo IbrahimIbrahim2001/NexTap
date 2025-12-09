@@ -40,7 +40,8 @@ export default function MembersList({ workspace, isPending }: MembersListProps) 
     const filteredMembers = query ? members?.filter((member) => {
         const name = member.user.name.toLocaleLowerCase();
         const email = member.user.email.toLocaleLowerCase();
-        return name.includes(query) || email.includes(query);
+        const role = member.role.toLocaleLowerCase();
+        return name.includes(query) || email.includes(query) || role.includes(query);
     })
         : members;
 
@@ -76,7 +77,7 @@ export default function MembersList({ workspace, isPending }: MembersListProps) 
                     }
                     <div className="mb-4 mt-2 pb-4 border-b">
                         <InputGroup>
-                            <InputGroupInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search member by name or email..." className="pl-9 rounded" />
+                            <InputGroupInput value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search member by name or email or role..." className="pl-9 rounded" />
                             <InputGroupAddon>
                                 <Search />
                             </InputGroupAddon>

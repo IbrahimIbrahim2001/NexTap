@@ -48,7 +48,7 @@ export function WorkspaceList() {
                         <Workspace key={workspace.id} workspace={workspace} />
                     ))}
                     <CreateWorkSpace trigger={
-                        <Card className="border-2 border-dashed w-full max-w-sm h-26 p-0 shadow-none hover:scale-105">
+                        <Card className="border-2 border-dashed w-full md:max-w-sm h-full min-h-28 p-0 shadow-none hover:scale-105">
                             <CardContent className="p-6 h-full flex items-center justify-center">
                                 <Plus className='size-10 text-foreground/80' />
                             </CardContent>

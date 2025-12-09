@@ -38,6 +38,7 @@ export default function Workspace({ workspace }: { workspace: Organization }) {
             <CardFooter className="flex items-center justify-end border-t border-border p-0!">
                 <Button variant="link" asChild onClick={() => setActiveWorkspace(workspace)}>
                     <Link
+                        prefetch={true}
                         href={`workspace/${workspace.id}/project`}
                         className="text-sm text-primary font-medium px-4 py-3 flex items-center underline-offset-4 hover:underline"
                     >
