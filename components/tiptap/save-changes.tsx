@@ -1,7 +1,7 @@
 "use client";
 
 import { orpc } from "@/lib/orpc";
-import { useMutation } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type Editor } from "@tiptap/react";
 import { useParams } from "next/navigation";
 import { Button } from "../ui/button";
@@ -13,8 +13,16 @@ interface SaveChangesButtonProps {
 }
 
 export const SaveChangesButton = ({ editor }: SaveChangesButtonProps) => {
+    const queryClient = useQueryClient();
     const { workspace_id, project_id } = useParams<{ workspace_id: string, project_id: string }>();
-    const saveNewContent = useMutation(orpc.project.update.mutationOptions());
+    const saveNewContent = useMutation(orpc.project.update.mutationOptions({
+        onSuccess: (data) => {
+            const queryKey = orpc.project.get.queryKey({ input: { workspace_id, project_id } })
+            if (data.success) {
+                queryClient.invalidateQueries({ queryKey });
+            }
+        }
+    }));
     const handleSave = async () => {
         if (!editor) {
             console.error("Editor not available");

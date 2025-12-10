@@ -17,8 +17,9 @@ import { useQuery } from "@tanstack/react-query";
 import { Organization } from "better-auth/plugins";
 import { ListTodo, Search } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useState } from "react";
+import { Activity, useState } from "react";
 import { Todo } from "./todo";
+import { Badge } from "@/components/ui/badge";
 interface TodoListProps {
     isPending: boolean
     workspace: Organization | null
@@ -72,6 +73,11 @@ export default function TodoList({ workspace, isPending }: TodoListProps) {
                             </InputGroupAddon>
                         </InputGroup>
                     </div>
+                    <Activity mode={filteredTasks?.length === 0 ? "visible" : "hidden"}>
+                        <div className="text-center  mb-4">
+                            <Badge variant="secondary">no tasks yet</Badge>
+                        </div>
+                    </Activity>
                     {filteredTasks?.map((task) => (
                         <Todo key={task.id} task={task} />
                     ))}
