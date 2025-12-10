@@ -15,10 +15,15 @@ import { Plus } from "lucide-react";
 import { CreateWorkSpace } from "../../components/create-workspace";
 import { Loader } from "../../components/loader";
 import Workspace from "./workspace";
+import { useQueryState } from "nuqs";
 export function WorkspaceList() {
     const { data: workspaces, isPending } = authClient.useListOrganizations();
+    const [searchWorkspace] = useQueryState("workspace");
+    const filteredWorkspaces = searchWorkspace ? workspaces?.filter((w) => {
+        return w.name.toLowerCase().includes(searchWorkspace.toLowerCase()) || w.slug.toLocaleLowerCase().includes(searchWorkspace.toLowerCase());
+    }) : workspaces;
     if (isPending) return <Loader />
-    if (!workspaces || workspaces.length === 0) {
+    if (!filteredWorkspaces || filteredWorkspaces.length === 0) {
         return (
             <div className='p-4'>
                 <Empty>
@@ -44,7 +49,7 @@ export function WorkspaceList() {
             <p className="text-lg font-semibold mb-4">Your Workspaces:</p>
             <div className="flex items-center justify-center">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4 w-full">
-                    {workspaces?.map((workspace) => (
+                    {filteredWorkspaces?.map((workspace) => (
                         <Workspace key={workspace.id} workspace={workspace} />
                     ))}
                     <CreateWorkSpace trigger={
