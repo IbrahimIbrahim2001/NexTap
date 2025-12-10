@@ -101,7 +101,7 @@ export const createTask = base
             throw new Error("User is not a member of this workspace");
         }
         const taskId = generateId();
-        const res = await db.insert(todos).values({
+        await db.insert(todos).values({
             id: taskId,
             organizationId: workspace_id,
             content,
@@ -109,7 +109,6 @@ export const createTask = base
             createdAt: new Date(),
             updatedAt: new Date(),
         })
-        console.log(res);
         return {
             success: true,
             message: `Created New Task Successfully`,
@@ -120,7 +119,7 @@ export const createTask = base
 
 export type TodoWithUser = TodoSchema & {
     member: UserSchema | null
-};
+}
 
 export const todoList = base
     .use(requiredAuthMiddleware)
@@ -147,7 +146,7 @@ export const todoList = base
         const todosWithUsers = await db
             .select({
                 todos: todos,
-                user: user
+                user: user,
             })
             .from(todos)
             .leftJoin(user, eq(todos.assigned_to, user.id))
@@ -211,4 +210,54 @@ export const updateTodoStatus = base.
         } catch {
             throw errors.INTERNAL_SERVER_ERROR()
         }
+    })
+
+export const deleteTodo = base
+    .use(requiredAuthMiddleware)
+    .route({
+        method: "DELETE",
+        path: "/:workspace_id/task/delete"
+    })
+    .input(
+        z.object({
+            workspace_id: z.string(),
+            task_id: z.string()
+        })
+    )
+    .output(z.object({
+        success: z.boolean(),
+        message: z.string()
+    }))
+    .handler(async ({ input, context, errors }) => {
+        const { workspace_id, task_id } = input;
+        const user_id = context.user.id;
+        const memberUser = await db.query.member.findFirst({
+            where: and(
+                eq(member.userId, user_id),
+                eq(member.organizationId, workspace_id)
+            ),
+        });
+        if (!memberUser || memberUser.role === "member") {
+            throw errors.FORBIDDEN()
+        }
+
+        const task = await db.query.todos.findFirst({
+            where: and(
+                eq(todos.id, task_id),
+                eq(todos.organizationId, workspace_id)
+            ),
+        });
+
+        if (!task) {
+            throw errors.NOT_FOUND();
+        }
+
+        const result = await db.delete(todos).where(and(
+            eq(todos.id, task_id),
+            eq(todos.organizationId, workspace_id)
+        ))
+        if (result.rowCount === 0) {
+            throw errors.NOT_FOUND()
+        }
+        return { success: true, message: "Task deleted successfully" };
     })

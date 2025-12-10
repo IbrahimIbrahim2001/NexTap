@@ -75,6 +75,8 @@ export default function CreateTask({ member, trigger }: { member: MemberWithUser
                             : task
                     )
                 })
+                setOpen(false);
+                form.reset();
             }
             toast.success(data.message);
         },
@@ -96,6 +98,9 @@ export default function CreateTask({ member, trigger }: { member: MemberWithUser
 
     async function onSubmit(data: createTaskSchemaType) {
         mutation.mutateAsync(data);
+    }
+
+    const closeDialog = () => {
         setOpen(false);
         form.reset();
     }
@@ -137,7 +142,7 @@ export default function CreateTask({ member, trigger }: { member: MemberWithUser
                     </FieldGroup>
                     <DialogFooter className="mt-4">
                         <DialogClose asChild>
-                            <Button variant="outline">Cancel</Button>
+                            <Button onClick={closeDialog} variant="outline">Cancel</Button>
                         </DialogClose>
                         <Button type="submit" disabled={form.formState.isSubmitting} className="flex items-center">
                             {form.formState.isSubmitting ?
