@@ -33,7 +33,7 @@ export function getBadgeTextColor(role: Role): string {
 export function getProjectStatusBadgeColor(status: ProjectSchema["status"] | undefined): string {
     switch (status) {
         case "in progress": return "bg-secondary";
-        case "finished": return "bg-destructive";
+        case "finished": return "bg-accent";
         default: return "bg-secondary";
     }
 }
@@ -42,7 +42,7 @@ export function getProjectStatusBadgeColor(status: ProjectSchema["status"] | und
 export function getProjectStatusBadgeBorderColor(status: ProjectSchema["status"] | undefined): string {
     switch (status) {
         case "in progress": return "border-secondary";
-        case "finished": return "border-destructive";
+        case "finished": return "border-accent";
         default: return "border-secondary";
     }
 }
@@ -50,7 +50,7 @@ export function getProjectStatusBadgeBorderColor(status: ProjectSchema["status"]
 export function getProjectStatusBadgeTextColor(status: ProjectSchema["status"] | undefined): string {
     switch (status) {
         case "in progress": return "text-secondary";
-        case "finished": return "text-destructive";
+        case "finished": return "text-accent";
         default: return "text-secondary";
     }
 }
