@@ -9,13 +9,17 @@ import { useQuery } from '@tanstack/react-query';
 import { CreateProject } from './create-project';
 import { Project } from './project';
 import { Plus } from 'lucide-react';
+import { useQueryState } from 'nuqs';
 
 export function ProjectList({ workspace_id }: { workspace_id: string }) {
-
+    const [searchProject] = useQueryState("project");
     const { data: projects, isError, isLoading } = useQuery(orpc.project.list.queryOptions({ input: { workspace_id } }))
+    const filteredProjects = searchProject ? projects?.filter(p => {
+        return p.name.toLowerCase().includes(searchProject.toLowerCase())
+    }) : projects
     if (isError) return <>Error</>
     if (isLoading) return <Loader />
-    if (!projects || projects.length === 0)
+    if (!filteredProjects || filteredProjects.length === 0)
         return (
             <div className='p-4'>
                 <Empty>
@@ -40,7 +44,7 @@ export function ProjectList({ workspace_id }: { workspace_id: string }) {
             <p className="text-lg font-semibold mb-4">Your Projects:</p>
             <div className="flex items-center justify-center">
                 <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 w-full">
-                    {projects?.map((project) => (
+                    {filteredProjects?.map((project) => (
                         <Project key={project.id} project={project} />
                     ))}
                     <CreateProject trigger={

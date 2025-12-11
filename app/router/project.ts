@@ -166,3 +166,49 @@ export const updateProjectContent = base
             project: updatedProject
         };
     })
+
+export const updateProjectStatus = base
+    .use(requiredAuthMiddleware)
+    .route({
+        method: "POST",
+        path: "/update-project-status"
+    })
+    .input(z.object({
+        workspace_id: z.string(),
+        project_id: z.string(),
+        newStatus: z.custom<ProjectSchema["status"]>()
+    }))
+    .output(z.object({
+        success: z.boolean(),
+        project: z.custom<ProjectSchema>()
+    }))
+    .handler(async ({ context, input, errors }) => {
+        const { workspace_id, project_id, newStatus } = input;
+        const userId = context.user.id;
+        const memberUser = await db.query.member.findFirst({
+            where: and(
+                eq(member.userId, userId),
+                eq(member.organizationId, workspace_id)
+            ),
+        });
+        if (!memberUser) {
+            throw errors.FORBIDDEN()
+        }
+        const [updatedProject] = await db.update(project)
+            .set({
+                status: newStatus,
+                updatedAt: new Date()
+            })
+            .where(and(
+                eq(project.organizationId, workspace_id),
+                eq(project.id, project_id)
+            ))
+            .returning();
+        if (!updatedProject) {
+            throw errors.NOT_FOUND({ message: "Project not found or update failed" });
+        }
+        return {
+            success: true,
+            project: updatedProject
+        };
+    })
