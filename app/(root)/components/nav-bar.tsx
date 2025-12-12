@@ -22,6 +22,7 @@ import {
     PopoverTrigger,
 } from "@/components/ui/popover"
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
 const LazyMemberList = lazy(() => import('./members-list'));
 const LazyWorkspaceSettings = lazy(() => import('./workspace-settings'));
 const LazyTodoList = lazy(() => import('./todo-list'));
@@ -88,41 +89,39 @@ export function Navbar() {
                 </div>
             </Activity>
             {/* member role and project status badges */}
-            <div className="flex-1/3">
-                <div className="absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2">
-                    <div className=" flex items-center justify-between gap-x-2">
-                        <Activity mode={params.workspace_id ? "visible" : "hidden"}>
-                            <Badge variant="outline" className={`${getBadgeBorderColor(memberRole as Role)} ${getBadgeTextColor(memberRole as Role)}`}>
-                                {isLoadingMemberRole ?
-                                    <Loader2 className="size-4 animate-spin" />
-                                    : memberRole
-                                }
-                            </Badge>
-                            <Activity mode={(params.project_id && isLoadingProject) || project ? "visible" : "hidden"}>
-                                <Separator
-                                    orientation="vertical"
-                                    className="data-[orientation=vertical]:h-4"
-                                />
-                                <ProjectStatusBadge status={project?.status} params={params} />
-                            </Activity>
+            <div className="absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2">
+                <div className=" flex items-center justify-between gap-x-2">
+                    <Activity mode={params.workspace_id ? "visible" : "hidden"}>
+                        <Badge variant="outline" className={`${getBadgeBorderColor(memberRole as Role)} ${getBadgeTextColor(memberRole as Role)}`}>
+                            {isLoadingMemberRole ?
+                                <Loader2 className="size-4 animate-spin" />
+                                : memberRole
+                            }
+                        </Badge>
+                        <Activity mode={(params.project_id && isLoadingProject) || project ? "visible" : "hidden"}>
+                            <Separator
+                                orientation="vertical"
+                                className="data-[orientation=vertical]:h-4"
+                            />
+                            <ProjectStatusBadge status={project?.status} params={params} />
                         </Activity>
-                    </div>
+                    </Activity>
                 </div>
             </div>
-            {/* search project */}
-            <Activity mode={params.project_id ? "hidden" : "visible"}>
-                <div className="h-8 w-fit border rounded flex items-center justify-start">
-                    <InputGroupAddon>
-                        <InputGroupInput value={searchProject ?? ""} onChange={(e) => setSearchProject(e.target.value)} placeholder="Search project..." className="rounded" />
-                        <InputGroupAddon>
-                            <Search />
-                        </InputGroupAddon>
-                    </InputGroupAddon>
-                </div>
-            </Activity>
             {/* workspace sheets */}
             <div className="flex items-center gap-x-2 pe-4">
+                {/* search project */}
                 <Activity mode={params.workspace_id ? "visible" : "hidden"}>
+                    <Activity mode={params.project_id ? "hidden" : "visible"}>
+                        <div className="h-8 w-fit border rounded flex items-center justify-start">
+                            <InputGroupAddon>
+                                <InputGroupInput value={searchProject ?? ""} onChange={(e) => setSearchProject(e.target.value)} placeholder="Search project..." className="rounded" />
+                                <InputGroupAddon>
+                                    <Search />
+                                </InputGroupAddon>
+                            </InputGroupAddon>
+                        </div>
+                    </Activity>
                     <LazyMemberList workspace={workspace} isPending={isPending} />
                     <LazyWorkspaceSettings workspace={workspace} isPending={isPending} />
                     <LazyTodoList workspace={workspace} isPending={isPending} />
@@ -137,6 +136,7 @@ export function Navbar() {
 function ProjectStatusBadge({ status, params }: { status: ProjectSchema["status"] | undefined, params: { workspace_id: string, project_id: string } }) {
     const [open, setOpen] = useState(false);
     const queryClient = useQueryClient();
+    const activeMember = authClient.useActiveMemberRole();
     const mutate = useMutation(orpc.project.update_Status.mutationOptions({
         onSuccess: () => {
             const projectKey = orpc.project.get.queryKey({ input: { workspace_id: params.workspace_id, project_id: params.project_id } });
@@ -147,11 +147,14 @@ function ProjectStatusBadge({ status, params }: { status: ProjectSchema["status"
     const handleStatusChange = async (newStatus: ProjectSchema["status"]) => {
         if (!status) return;
         try {
-            await mutate.mutateAsync({
-                workspace_id: params.workspace_id,
-                project_id: params.project_id,
-                newStatus
-            });
+            if (activeMember.data?.role !== 'admin' && activeMember.data?.role !== 'owner') {
+                toast.error("You don't have permission to update project status.");
+                await mutate.mutateAsync({
+                    workspace_id: params.workspace_id,
+                    project_id: params.project_id,
+                    newStatus
+                });
+            }
         }
         catch (error) {
             console.error("Failed to update project status:", error);

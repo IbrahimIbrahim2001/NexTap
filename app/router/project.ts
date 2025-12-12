@@ -1,12 +1,12 @@
 import { db } from "@/db/drizzle";
 import { member, project, ProjectSchema } from "@/db/schema";
 import { createProjectSchema } from "@/schemas/create-project-schema";
+import { updateProjectContentSchema } from "@/schemas/update-project-content-schema";
 import { generateId } from "better-auth";
 import { and, eq } from "drizzle-orm";
 import z from "zod";
 import { requiredAuthMiddleware } from "../middleware/auth-middleware";
 import { base } from "../middleware/base";
-import { updateProjectContentSchema } from "@/schemas/update-project-content-schema";
 
 export const createProject = base
     .route({
@@ -191,7 +191,7 @@ export const updateProjectStatus = base
                 eq(member.organizationId, workspace_id)
             ),
         });
-        if (!memberUser) {
+        if (!memberUser || memberUser.role === "member") {
             throw errors.FORBIDDEN()
         }
         const [updatedProject] = await db.update(project)
@@ -211,4 +211,45 @@ export const updateProjectStatus = base
             success: true,
             project: updatedProject
         };
+    })
+
+export const deleteProject = base
+    .use(requiredAuthMiddleware)
+    .route({
+        method: "POST",
+        path: "/delete_project"
+    })
+    .input(z.object({
+        project_id: z.string(),
+        workspace_id: z.string(),
+    }))
+    .output(z.object({
+        success: z.boolean(),
+        projectId: z.string().optional()
+    }))
+    .handler(async ({ context, input, errors }) => {
+        const { project_id, workspace_id } = input
+        const userId = context.user.id;
+        const memberUser = await db.query.member.findFirst({
+            where: and(
+                eq(member.userId, userId),
+                eq(member.organizationId, workspace_id)
+            ),
+        });
+        if (!memberUser || memberUser.role === "member") {
+            throw errors.FORBIDDEN()
+        }
+        // Delete the project
+        const res = await db.delete(project).where(and(
+            eq(project.id, project_id),
+            eq(project.organizationId, workspace_id)
+
+        ))
+        if (res.rowCount === 0) {
+            throw errors.NOT_FOUND({ message: "Project not found or delete failed" });
+        }
+        return {
+            success: true,
+            projectId: project_id
+        }
     })

@@ -10,14 +10,15 @@ import {
     SheetTrigger
 } from "@/components/ui/sheet";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
 import { Organization } from "better-auth/plugins";
 import { Settings } from "lucide-react";
 import { useParams } from "next/navigation";
-import { useState } from "react";
-import { UpdateWorkspaceSlug } from "../workspace/components/update-workspace-slug";
+import { Activity, useState } from "react";
 import { DeleteWorkspace } from "../workspace/components/delete-workspace";
+import { UpdateWorkspaceSlug } from "../workspace/components/update-workspace-slug";
 import { UploadWorkSpaceLogo } from "./upload-workspace-logo";
-import { Tooltip, TooltipContent, TooltipTrigger } from "@/components/ui/tooltip";
+import { DeleteProject } from "./delete-project";
 
 interface WorkspaceSettingsProps {
     isPending: boolean
@@ -25,7 +26,7 @@ interface WorkspaceSettingsProps {
 }
 export default function WorkspaceSettings({ workspace, isPending }: WorkspaceSettingsProps) {
     const [open, setOpen] = useState(false);
-    const { workspace_id } = useParams<{ workspace_id: string }>()
+    const { workspace_id, project_id } = useParams<{ workspace_id: string, project_id: string }>()
     return (
         <Sheet open={open} onOpenChange={setOpen}>
             <Tooltip>
@@ -70,6 +71,12 @@ export default function WorkspaceSettings({ workspace, isPending }: WorkspaceSet
                         <p className="mb-2">Delete Workspace:</p>
                         <DeleteWorkspace handleOpen={() => setOpen(false)} />
                     </div>
+                    <Activity mode={project_id ? "visible" : "hidden"}>
+                        <div className="border-2 border-destructive/50 rounded-lg p-3 space-y-2">
+                            <p className="mb-2">Delete Project:</p>
+                            <DeleteProject />
+                        </div>
+                    </Activity>
                 </div>
                 <SheetFooter>
                     <SheetClose asChild>
