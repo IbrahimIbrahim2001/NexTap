@@ -98,7 +98,7 @@ export const HeroHeader = () => {
                                         variant="outline"
                                         size="sm"
                                         className={cn(isScrolled && 'lg:hidden')}>
-                                        <Link href="workspace">
+                                        <Link prefetch={true} href="workspace">
                                             <span>Dashboard</span>
                                         </Link>
                                     </Button>

@@ -1,4 +1,4 @@
-import { createProject, getProject, projectList, updateProjectContent, updateProjectStatus } from "./project";
+import { createProject, deleteProject, getProject, projectList, updateProjectContent, updateProjectStatus } from "./project";
 import { createTask, deleteTodo, membersList, todoList, updateTodoStatus, workspaceList } from "./workspace";
 export const router = {
     workspace: {
@@ -18,6 +18,7 @@ export const router = {
         list: projectList,
         get: getProject,
         update: updateProjectContent,
-        update_Status: updateProjectStatus
+        update_Status: updateProjectStatus,
+        delete: deleteProject,
     }
 }
