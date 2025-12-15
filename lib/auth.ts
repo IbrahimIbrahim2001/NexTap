@@ -3,7 +3,7 @@ import { getActiveOrganization } from "@/server/organizations";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { organization } from "better-auth/plugins"
-import { sendOrganizationInvitation } from "./mailer";
+import { sendOrganizationInvitation, sendVerificationEmail } from "./mailer";
 import { ac, admin, member, owner } from "./auth/permissions";
 import { nextCookies } from "better-auth/next-js";
 
@@ -15,6 +15,21 @@ export const auth = betterAuth({
     secret: process.env.BETTER_AUTH_SECRET!,
     emailAndPassword: {
         enabled: true,
+        requireEmailVerification: true,
+    },
+    emailVerification: {
+        sendVerificationEmail: async ({ user, url }) => {
+            void sendVerificationEmail({
+                user,
+                url
+            });
+        },
+    },
+    socialProviders: {
+        google: {
+            clientId: process.env.GOOGLE_CLIENT_ID as string,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+        },
     },
     databaseHooks: {
         session: {
