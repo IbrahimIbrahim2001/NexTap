@@ -142,23 +142,21 @@ function ProjectStatusBadge({ status, params }: { status: ProjectSchema["status"
             const projectKey = orpc.project.get.queryKey({ input: { workspace_id: params.workspace_id, project_id: params.project_id } });
             queryClient.invalidateQueries({ queryKey: projectKey });
             setOpen(false);
+        },
+        onError: (error) => {
+            toast.error(error.message);
         }
     }));
     const handleStatusChange = async (newStatus: ProjectSchema["status"]) => {
-        if (!status) return;
-        try {
-            if (activeMember.data?.role !== 'admin' && activeMember.data?.role !== 'owner') {
-                toast.error("You don't have permission to update project status.");
-                await mutate.mutateAsync({
-                    workspace_id: params.workspace_id,
-                    project_id: params.project_id,
-                    newStatus
-                });
-            }
+        if (activeMember.data?.role !== "admin" && activeMember.data?.role !== "owner") {
+            toast.error("You don't have permission to update project status.");
+            return;
         }
-        catch (error) {
-            console.error("Failed to update project status:", error);
-        }
+        await mutate.mutateAsync({
+            workspace_id: params.workspace_id,
+            project_id: params.project_id,
+            newStatus
+        });
     }
     return (
         <Popover open={open} onOpenChange={setOpen}>

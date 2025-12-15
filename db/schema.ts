@@ -88,6 +88,7 @@ export const member = pgTable("member", {
   createdAt: timestamp("created_at").notNull(),
 });
 
+
 export const invitation = pgTable("invitation", {
   id: text("id").primaryKey(),
   organizationId: text("organization_id")

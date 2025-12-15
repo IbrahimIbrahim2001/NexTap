@@ -75,6 +75,42 @@ export const membersList = base
         return members;
     });
 
+// not used for now
+export const getMember = base
+    .use(requiredAuthMiddleware)
+    .route({
+        method: "GET",
+        path: "/:workspace_id/get_member"
+    })
+    .input(z.object({
+        workspace_id: z.string()
+    }))
+    .output(z.object({
+        role: z.string()
+    }))
+    .handler(async ({ input, context }) => {
+        const { workspace_id } = input;
+        const user_id = context.user.id;
+        const memberUser = await db.query.member.findFirst({
+            where: and(
+                eq(member.userId, user_id),
+                eq(member.organizationId, workspace_id)
+            ),
+        });
+        if (!memberUser) {
+            throw new Error("User is not a member of this workspace");
+        }
+        const memberRole = await db.select({
+            role: member.role
+        }).from(member).where(and(
+            eq(member.userId, user_id),
+            eq(member.organizationId, workspace_id)
+        ));
+        return memberRole[0];
+    })
+
+
+
 
 export const createTask = base
     .use(requiredAuthMiddleware)

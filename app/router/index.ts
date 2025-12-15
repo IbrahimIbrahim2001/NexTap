@@ -1,5 +1,5 @@
 import { createProject, deleteProject, getProject, projectList, updateProjectContent, updateProjectStatus } from "./project";
-import { createTask, deleteTodo, membersList, todoList, updateTodoStatus, workspaceList } from "./workspace";
+import { createTask, deleteTodo, getMember, membersList, todoList, updateTodoStatus, workspaceList } from "./workspace";
 export const router = {
     workspace: {
         list: workspaceList,
@@ -10,7 +10,8 @@ export const router = {
             delete: deleteTodo
         },
         members: {
-            list: membersList
+            list: membersList,
+            get: getMember,
         },
     },
     project: {

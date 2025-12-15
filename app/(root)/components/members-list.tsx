@@ -33,7 +33,10 @@ export default function MembersList({ workspace, isPending }: MembersListProps) 
     const [open, setOpen] = useState(false);
     const [search, setSearch] = useState<string>("");
     const { workspace_id } = useParams<{ workspace_id: string }>()
-    const { data: members, isLoading, error } = useQuery(orpc.workspace.members.list.queryOptions({ input: { workspace_id } }));
+    const { data: members, isLoading, error } = useQuery(orpc.workspace.members.list.queryOptions({
+        input: { workspace_id },
+        refetchOnWindowFocus: true,
+    }));
 
     const query = search?.trim().toLocaleLowerCase();
 
