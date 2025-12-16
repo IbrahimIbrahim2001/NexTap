@@ -1,5 +1,6 @@
 import EmailVerification from "@/components/emails/email-verification";
 import TeamInvitationEmail from "@/components/emails/organization-invitations";
+import PasswordResetEmail from "@/components/emails/password-reset";
 import { render } from "@react-email/render";
 import { User } from "better-auth";
 import nodemailer from "nodemailer";
@@ -98,5 +99,29 @@ export async function sendOrganizationInvitation(params: SendOrganizationInvitat
   } catch (error) {
     console.error("Failed to send organization invitation email:", error);
     throw new Error(`Failed to send invitation email: ${error instanceof Error ? error.message : 'Unknown error'}`);
+  }
+}
+
+// reset password
+export async function resetPassword({ user, url, token }: { user: User, url: string, token: string }) {
+  try {
+    const emailHtml = await render(
+      PasswordResetEmail({
+        userEmail: user.email,
+        resetLink: `${url}`
+        , token
+      })
+    );
+    const info = await transporter.sendMail({
+      from: `"NexTap" <${process.env.EMAIL_USER}>`,
+      to: user.email,
+      subject: "Verify Your Email Address",
+      html: emailHtml,
+    });
+    console.log("Email sent successfully:", info.messageId);
+    return { success: true, messageId: info.messageId };
+  } catch (error) {
+    console.error("Error sending email:", error);
+    return { success: false, error };
   }
 }

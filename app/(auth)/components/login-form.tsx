@@ -1,4 +1,5 @@
 "use client";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -22,6 +23,7 @@ import { cn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import Link from "next/link";
 import { redirect } from "next/navigation";
+import { Activity } from "react";
 import { Controller, useForm } from "react-hook-form";
 import { toast } from "sonner";
 import z from "zod";
@@ -35,6 +37,7 @@ export function LoginForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
+  const wasGoogle = authClient.isLastUsedLoginMethod("google")
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -76,6 +79,11 @@ export function LoginForm({
           <form id="form" onSubmit={form.handleSubmit(onSubmit)}>
             <FieldGroup className="gap-y-5">
               <Field>
+                <Activity mode={wasGoogle ? "visible" : "hidden"}>
+                  <div className="flex justify-end items-center relative">
+                    <Badge variant="default" className="absolute top-0 right-0">Last used</Badge>
+                  </div>
+                </Activity>
                 <Button onClick={signInWithGoogle} variant="outline" type="button">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                     <path
@@ -119,7 +127,7 @@ export function LoginForm({
                     <div className="flex items-center">
                       <FieldLabel htmlFor="password">Password</FieldLabel>
                       <Link
-                        href="#"
+                        href="/forget-password"
                         className="ml-auto text-sm underline-offset-4 hover:underline"
                       >
                         Forgot your password?
