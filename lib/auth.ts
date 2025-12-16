@@ -3,9 +3,10 @@ import { getActiveOrganization } from "@/server/organizations";
 import { betterAuth } from "better-auth";
 import { drizzleAdapter } from "better-auth/adapters/drizzle";
 import { organization } from "better-auth/plugins"
-import { sendOrganizationInvitation, sendVerificationEmail } from "./mailer";
+import { resetPassword, sendOrganizationInvitation, sendVerificationEmail } from "./mailer";
 import { ac, admin, member, owner } from "./auth/permissions";
 import { nextCookies } from "better-auth/next-js";
+import { lastLoginMethod } from "better-auth/plugins"
 
 export const auth = betterAuth({
     database: drizzleAdapter(db, {
@@ -16,6 +17,12 @@ export const auth = betterAuth({
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: true,
+        sendResetPassword: async ({ user, url, token }) => {
+            resetPassword({ user, url, token })
+        },
+        onPasswordReset: async ({ user }) => {
+            console.log(`Password for user ${user.email} has been reset.`);
+        },
     },
     emailVerification: {
         sendVerificationEmail: async ({ user, url }) => {
@@ -65,6 +72,7 @@ export const auth = betterAuth({
                 member,
             },
         }),
-        nextCookies()
+        nextCookies(),
+        lastLoginMethod()
     ]
 });
