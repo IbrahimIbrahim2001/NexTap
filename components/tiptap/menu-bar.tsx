@@ -27,6 +27,7 @@ import {
     Undo
 } from "lucide-react"
 import { SaveChangesButton } from "./save-changes"
+import DownloadPdfButton from "./download-pdf-button"
 
 export default function MenuBar({ editor }: { editor: Editor | null }) {
     const editorState = useEditorState({
@@ -386,6 +387,7 @@ export default function MenuBar({ editor }: { editor: Editor | null }) {
 
             {/* Block Elements */}
             <BlockButtons />
+            <DownloadPdfButton editor={editor} />
             <SaveChangesButton editor={editor} />
         </div>
     )

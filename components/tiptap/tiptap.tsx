@@ -44,7 +44,7 @@ const Tiptap = ({ content }: TiptapProps) => {
         content: content as Content,
         editorProps: {
             attributes: {
-                class: "min-h-[calc(100vh-190px)] border rounded-md py-2 px-3  prose prose-sm  focus:outline-none",
+                class: "sm:min-h-[calc(100vh-190px)] border rounded-md py-2 px-3  prose prose-sm  focus:outline-none",
             },
         },
         autofocus: false,

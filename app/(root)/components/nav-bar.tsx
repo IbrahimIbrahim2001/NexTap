@@ -92,7 +92,7 @@ export function Navbar() {
             <div className="absolute left-1/2 transform -translate-x-1/2 top-1/2 -translate-y-1/2">
                 <div className=" flex items-center justify-between gap-x-2">
                     <Activity mode={params.workspace_id ? "visible" : "hidden"}>
-                        <Badge variant="outline" className={`${getBadgeBorderColor(memberRole as Role)} ${getBadgeTextColor(memberRole as Role)}`}>
+                        <Badge variant="outline" className={`${getBadgeBorderColor(memberRole as Role)} ${getBadgeTextColor(memberRole as Role)} hidden sm:block`}>
                             {isLoadingMemberRole ?
                                 <Loader2 className="size-4 animate-spin" />
                                 : memberRole
@@ -101,7 +101,7 @@ export function Navbar() {
                         <Activity mode={(params.project_id && isLoadingProject) || project ? "visible" : "hidden"}>
                             <Separator
                                 orientation="vertical"
-                                className="data-[orientation=vertical]:h-4"
+                                className="data-[orientation=vertical]:h-4  hidden sm:block"
                             />
                             <ProjectStatusBadge status={project?.status} params={params} />
                         </Activity>

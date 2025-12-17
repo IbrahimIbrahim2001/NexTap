@@ -37,7 +37,7 @@ export const SaveChangesButton = ({ editor }: SaveChangesButtonProps) => {
     }
     const { isPending } = saveNewContent;
     return (
-        <div className="flex-1 grid justify-items-end">
+        <div className="grid justify-items-end">
             <Button onClick={handleSave} disabled={isPending} className="flex items-center">
                 {isPending ?
                     <>
