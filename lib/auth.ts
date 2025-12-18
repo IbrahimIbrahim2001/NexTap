@@ -14,6 +14,11 @@ export const auth = betterAuth({
     }),
     trustedOrigins: [process.env.NEXT_PUBLIC_CORS_ORIGIN!],
     secret: process.env.BETTER_AUTH_SECRET!,
+    user: {
+        deleteUser: {
+            enabled: true
+        }
+    },
     emailAndPassword: {
         enabled: true,
         requireEmailVerification: true,

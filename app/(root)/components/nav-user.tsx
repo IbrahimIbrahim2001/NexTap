@@ -28,6 +28,7 @@ import {
 } from "@/components/ui/sidebar"
 import { authClient } from "@/lib/auth-client"
 import { useRouter } from "next/navigation"
+import Link from "next/link"
 
 export function NavUser() {
     const user = authClient.useSession().data?.user;
@@ -90,10 +91,12 @@ export function NavUser() {
                         </DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuGroup>
-                            <DropdownMenuItem>
-                                <BadgeCheck />
-                                Account
-                            </DropdownMenuItem>
+                            <Link href="/account">
+                                <DropdownMenuItem>
+                                    <BadgeCheck />
+                                    Account
+                                </DropdownMenuItem>
+                            </Link>
                         </DropdownMenuGroup>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={handleSignout}>

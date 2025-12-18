@@ -10,7 +10,7 @@ import { orpc } from "@/lib/orpc";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Loader2, Search } from "lucide-react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, usePathname } from "next/navigation";
 import { Activity, lazy, useState } from "react";
 import { getBadgeBorderColor, getBadgeTextColor, getProjectStatusBadgeColor, Role } from "../utils/get-role-badge-color";
 import { InputGroupAddon, InputGroupInput } from "@/components/ui/input-group";
@@ -29,6 +29,7 @@ const LazyTodoList = lazy(() => import('./todo-list'));
 
 export function Navbar() {
     const params = useParams<{ workspace_id: string, project_id: string }>()
+    const pathname = usePathname();
     const [searchWorkspace, setSearchWorkspace] = useQueryState('workspace');
     const [searchProject, setSearchProject] = useQueryState('project');
     const { data: workspace, isPending } = authClient.useActiveOrganization();
@@ -76,7 +77,7 @@ export function Navbar() {
                 </Activity>
             </div>
             {/* search workspace */}
-            <Activity mode={!params.workspace_id && !params.project_id ? "visible" : "hidden"}>
+            <Activity mode={!params.workspace_id && !params.project_id && !pathname.includes("account") ? "visible" : "hidden"}>
                 <div className="flex-1 flex items-center justify-center pe-5">
                     <div className="h-8 w-fit border rounded flex items-center justify-start">
                         <InputGroupAddon>
