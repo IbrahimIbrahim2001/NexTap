@@ -108,8 +108,8 @@ export async function resetPassword({ user, url, token }: { user: User, url: str
     const emailHtml = await render(
       PasswordResetEmail({
         userEmail: user.email,
-        resetLink: `${url}`
-        , token
+        resetLink: `${url}`,
+        expirationTime: "24 hours"
       })
     );
     const info = await transporter.sendMail({

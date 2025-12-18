@@ -13,7 +13,7 @@ import {
     Tailwind,
 } from '@react-email/components';
 
-const PasswordResetEmail = (props) => {
+const PasswordResetEmail = (props: { userEmail: string, resetLink: string, expirationTime: string }) => {
     const { userEmail, resetLink, expirationTime } = props;
 
     return (

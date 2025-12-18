@@ -167,7 +167,7 @@ function renderNodes(doc: jsPDF, nodes: TipTapNode[], y: number, config: PDFConf
                 break
 
             case "horizontalRule":
-                currentY = renderHorizontalRule(doc, node, currentY, config)
+                currentY = renderHorizontalRule(doc, currentY, config)
                 break
 
             case "hardBreak":
