@@ -26,7 +26,7 @@ export default function Pricing() {
                                     </Button>
                                 </div>
 
-                                <p className="text-muted-foreground mt-12 text-sm">Includes : Security, Unlimited Storage, Payment, Search engine, and all features</p>
+                                <p className="text-muted-foreground mt-12 text-sm">Includes : Security, Unlimited Storage, and all features</p>
                             </div>
                             <div className="relative">
                                 <ul

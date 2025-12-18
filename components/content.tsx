@@ -7,11 +7,11 @@ export default function ContentSection() {
         <section className="py-16 md:py-32" id='about'>
             <div className="mx-auto max-w-5xl px-6">
                 <div className="grid gap-6 md:grid-cols-2 md:gap-12">
-                    <h2 className="text-4xl font-medium">The Lyra ecosystem brings together our models, products and platforms.</h2>
+                    <h2 className="text-4xl font-medium">NexTap: Where editing meets team collaboration.</h2>
                     <div className="space-y-6">
-                        <p>Lyra is evolving to be more than just the models. It supports an entire ecosystem — from products to the APIs and platforms helping developers and businesses innovate.</p>
+                        <p>Move beyond isolated documents. NexTap combines powerful Tiptap editing with organizational tools that help teams coordinate their work from draft to completion.</p>
                         <p>
-                            Tailark. <span className="font-bold">It supports an entire ecosystem</span> — from products innovate. Sit minus, quod debitis autem quia aspernatur delectus impedit modi, neque non id ad dignissimos? Saepe deleniti perferendis beatae.
+                            Organize content in  <span className="font-bold">shared workspaces</span>, manage progress through <span className="font-bold">projects and todos</span>, and collaborate with <span className="font-bold">team members</span> through seamless invitations. Edit together in real-time while tracking tasks and milestones—all in one unified platform.
                         </p>
                         <Button
                             asChild
