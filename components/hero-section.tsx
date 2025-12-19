@@ -9,9 +9,11 @@ import BetterAuthLogo from "@/public/companies/better-auth-logo.png"
 import ShadcnLogo from "@/public/companies/shadcn-ui.png"
 import VercelLogo from "@/public/companies/vercel.svg"
 import OrpcLogo from "@/public/companies/oprc-logo.webp"
-import PrismaLogo from "@/public/companies/prisma-logo.png"
+import drizzleLogo from "@/public/companies/drizzle-orm.png"
 import NextLogo from "@/public/companies/next-3.svg"
 import NeonLogo from "@/public/companies/neon-logo.png"
+import appDarkScreen from "@/public/app-screen-dark.png";
+import appLightScreen from "@/public/app-screen-light.png";
 
 const transitionVariants = {
     item: {
@@ -167,14 +169,14 @@ export default async function HeroSection() {
                                 <div className="inset-shadow-2xs ring-background dark:inset-shadow-white/20 bg-background relative mx-auto max-w-6xl overflow-hidden rounded-2xl border p-4 shadow-lg shadow-zinc-950/15 ring-1">
                                     <Image
                                         className="bg-background aspect-15/8 relative hidden rounded-2xl dark:block object-contain object-top"
-                                        src="/mail2.png"
+                                        src={appDarkScreen}
                                         alt="app screen"
                                         width="2700"
                                         height="1440"
                                     />
                                     <Image
                                         className="z-2 border-border/25 aspect-15/8 relative rounded-2xl border dark:hidden object-contain object-top"
-                                        src="/mail2-light.png"
+                                        src={appLightScreen}
                                         alt="app screen"
                                         width="2700"
                                         height="1440"
@@ -207,11 +209,11 @@ export default async function HeroSection() {
                             </div>
                             <div className="flex">
                                 <Image
-                                    className="mx-auto h-4 w-24"
-                                    src={PrismaLogo}
-                                    alt="Prisma Logo"
-                                    height="16"
-                                    width="96"
+                                    className="mx-auto h-5 w-fit "
+                                    src={OrpcLogo}
+                                    alt="Orpc Logo"
+                                    height="20"
+                                    width="20"
                                 />
                             </div>
                             <div className="flex">
@@ -250,13 +252,13 @@ export default async function HeroSection() {
                                     width="20"
                                 />
                             </div>
-                            <div className="flex">
+                            <div className="flex items-center h-full">
                                 <Image
-                                    className="mx-auto h-5 w-fit "
-                                    src={OrpcLogo}
-                                    alt="Orpc Logo"
-                                    height="20"
-                                    width="20"
+                                    className="mx-auto size-8"
+                                    src={drizzleLogo}
+                                    alt="drizzle Logo"
+                                    height="32"
+                                    width="32"
                                 />
                             </div>
                             <div className="flex">
